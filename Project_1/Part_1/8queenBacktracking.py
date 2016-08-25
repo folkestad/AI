@@ -1,31 +1,55 @@
-def backtracking(chess_board):
-    return "place holder"
+#import Tkinter
+#====== Algorithm =============================================================
 
+def recursive_backtracking(column):
+    if column == len(chess_board):
+        return True
+    else:
+        for row in range(len(chess_board)):
+            if legal_move(row, column):
+                chess_board[row][column] = 'Q'
+                if recursive_backtracking(column + 1):
+                    #print row, " ", column
+                    return True
+                chess_board[row][column] = '.'
+        return False
+
+def legal_move(row, column):
+    for col in range(column):
+        if row-col >= 0 and chess_board[row-col][column-col] == 'Q':
+            return False
+        if chess_board[row][column-col] == 'Q':
+            return False
+        if row+col < len(chess_board) and chess_board[row+col][column-col] == 'Q':
+            return False
+    return True
+
+#==============================================================================
 
 #====== Creation of Board =====================================================
 
-def print_board(chess_board):
-    rownumber = 8
+def print_board():
+    rownumber = len(chess_board)
     print '  a b c d e f g h'
     for i in range(len(chess_board)-1, -1, -1):
         print rownumber,
-        for j in chess_board[i]:
-            print j,
+        for j in range(len(chess_board)):
+            print chess_board[i][j],
         print rownumber
         rownumber -= 1
     print '  a b c d e f g h'
 
 def user_interaction():
-    print 'Place queens ( ex. "2 4 6 0 0 0 0 0")'
+    print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
     user_input = raw_input().replace(' ', '')
     while len(user_input) != 8:
-        print 'Place queens ( ex. "2 4 6 0 0 0 0 0")'
+        print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
         user_input = raw_input().replace(' ', '')
     return user_input
 
 def create_board(user_input):
     chess_board = []
-    for i in range(8):
+    for i in range(len(user_input)):
         chess_board.append(['.','.','.','.','.','.','.','.'])
     for i in range(len(user_input)):
         if user_input[i] != '0':
@@ -34,7 +58,22 @@ def create_board(user_input):
 
 #==============================================================================
 
+#====== Flow Controll =========================================================
 
-chess_board = create_board(user_interaction())
+user_input = user_interaction()
+chess_board = create_board(user_input)
+start_column = 0
+for i in range(len(user_input)):
+    if user_input[i] == '0':
+        start_column = i
+        break
+print start_column
+solution_exists = recursive_backtracking(start_column)
 print ""
-print_board(chess_board)
+print_board()
+
+#top = Tkinter.Tk()
+#Code to add widgets will go here...
+#top.mainloop()
+
+#==============================================================================
