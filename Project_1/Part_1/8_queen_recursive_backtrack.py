@@ -9,13 +9,12 @@ def recursive_backtracking(column):
             if legal_move(row, column):
                 chess_board[row][column] = 'Q'
                 if recursive_backtracking(column + 1):
-                    #print row, " ", column
                     return True
                 chess_board[row][column] = '.'
         return False
 
 def legal_move(row, column):
-    for col in range(column):
+    for col in range(0, column+1):
         if row-col >= 0 and chess_board[row-col][column-col] == 'Q':
             return False
         if chess_board[row][column-col] == 'Q':
@@ -67,10 +66,12 @@ for i in range(len(user_input)):
     if user_input[i] == '0':
         start_column = i
         break
-print start_column
 solution_exists = recursive_backtracking(start_column)
 print ""
-print_board()
+if solution_exists:
+    print_board()
+else:
+    print "There exists no solution"
 
 #top = Tkinter.Tk()
 #Code to add widgets will go here...
