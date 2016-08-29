@@ -140,8 +140,6 @@ solutions = []
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
 if solution_exists:
-    #print_first_board()
-    #print ""
     for i in solutions:
         print i
     print ""
