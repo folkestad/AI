@@ -129,12 +129,14 @@ user_input = user_interaction()
 print ""
 chess_board = create_board(user_input)
 start_column = 0
+temp_solution = ''
 for i in range(len(user_input)):
     if user_input[i] == '0':
         start_column = i
         break
+    else:
+        temp_solution += user_input[i]
 solutions = []
-temp_solution = ''
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
 if solution_exists:
