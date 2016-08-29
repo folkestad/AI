@@ -1,4 +1,5 @@
 #import Tkinter
+from termcolor import colored
 #====== Algorithm =============================================================
 
 def recursive_backtracking(column):
@@ -19,20 +20,23 @@ def recursive_backtracking(column):
         return len(solutions) > 0
 
 def recursive_backtracking_step_by_step(column):
+    global temp_solution
     if column == len(chess_board):
         return True
     else:
         for row in range(len(chess_board)):
             if legal_move(row, column):
                 chess_board[row][column] = 'Q'
+                temp_solution += `row+1`
+                print_step(True)
                 if recursive_backtracking_step_by_step(column + 1) and column == len(chess_board)-1:
-                    solution = ""
-                    for i in range(len(chess_board)):
-                        for j in range(len(chess_board)):
-                            if chess_board[j][i] == 'Q':
-                                solution += `j+1`+" "
-                    solutions.append(solution)
+                    solutions.append(temp_solution)
+                temp_solution = temp_solution[:-1]
                 chess_board[row][column] = '.'
+            else:
+                temp_solution += `row+1`
+                print_step(False)
+                temp_solution = temp_solution[:-1]
         return len(solutions) > 0
 
 def legal_move(row, column):
@@ -48,6 +52,19 @@ def legal_move(row, column):
 #==============================================================================
 
 #====== Creation of Board =====================================================
+
+def print_step(legal):
+    for i in range(len(chess_board)):
+        if i < len(temp_solution)-1:
+            print temp_solution[i],
+        elif i == len(temp_solution)-1:
+            if legal:
+                print colored(temp_solution[i], 'green'),
+            else:
+                print colored(temp_solution[i], 'red'),
+        else:
+            print '0',
+    print ''
 
 def print_board():
     rownumber = len(chess_board)
@@ -69,7 +86,7 @@ def print_board():
     print ""
 
 def print_first_board():
-    board = create_board(solutions[0].replace(' ', ''))
+    board = create_board(solutions[0])
     rownumber = len(board)
     print ' ',
     for i in range(len(board)):
@@ -109,6 +126,7 @@ def create_board(user_input):
 #====== Flow Controll =========================================================
 
 user_input = user_interaction()
+print ""
 chess_board = create_board(user_input)
 start_column = 0
 for i in range(len(user_input)):
@@ -116,11 +134,12 @@ for i in range(len(user_input)):
         start_column = i
         break
 solutions = []
-solution_exists = recursive_backtracking(start_column)
+temp_solution = ''
+solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
-if solutions:
-    print_first_board()
-    print ""
+if solution_exists:
+    #print_first_board()
+    #print ""
     for i in solutions:
         print i
     print ""
