@@ -1,5 +1,6 @@
 #import Tkinter
 from termcolor import colored
+import time
 #====== Algorithm =============================================================
 
 def recursive_backtracking(column):
@@ -26,19 +27,26 @@ def recursive_backtracking_step_by_step(column):
         return True
     else:
         for row in range(len(chess_board)):
-            prev_solution = temp_solution
-            if legal_move(row, column):
-                chess_board[row][column] = 'Q'
-                temp_solution += "%d " % (row+1)
-                print_step(True)
-                if recursive_backtracking_step_by_step(column + 1) and column == len(chess_board)-1:
-                    solutions.append(temp_solution)
-                temp_solution = prev_solution
-                chess_board[row][column] = '.'
+            if row in solution_set:
+                continue
             else:
-                temp_solution += "%d " % (row+1)
-                print_step(False)
-                temp_solution = prev_solution
+                prev_solution = temp_solution
+                solution_set.add(row)
+                if legal_move(row, column):
+
+                    chess_board[row][column] = 'Q'
+                    temp_solution += "%d " % (row+1)
+                    #print_step(True)
+                    if recursive_backtracking_step_by_step(column + 1) and column == len(chess_board)-1:
+                        solutions.append(temp_solution)
+                    temp_solution = prev_solution
+                    chess_board[row][column] = '.'
+
+                else:
+                    temp_solution += "%d " % (row+1)
+                    #print_step(False)
+                    temp_solution = prev_solution
+                solution_set.remove(row)
         return len(solutions) > 0
 
 def legal_move(row, column):
@@ -129,16 +137,19 @@ def create_board(user_input):
 #====== Flow Controll =========================================================
 
 user_input = user_interaction()
+start = time.time()
 print ""
 chess_board = create_board(user_input)
 start_column = 0
 temp_solution = ''
+solution_set = set()
 for i in range(len(user_input)):
     if user_input[i] == '0':
         start_column = i
         break
     else:
         temp_solution += user_input[i]+" "
+        solution_set.add(int(user_input[i])-1)
 solutions = []
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
@@ -150,6 +161,8 @@ if solution_exists:
     print len(solutions)
 else:
     print "There exists no solutions."
+end = time.time()
+print end-start
 
 
 #top = Tkinter.Tk()
