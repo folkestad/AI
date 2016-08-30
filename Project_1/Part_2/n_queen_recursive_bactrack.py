@@ -13,34 +13,36 @@ def recursive_backtracking(column):
                     solution = ""
                     for i in range(len(chess_board)):
                         for j in range(len(chess_board)):
-                            if chess_board[j][i] == 'Q':
-                                solution += `j+1`+" "
+                            if chess_board[i][j] == 'Q':
+                                solution += `i+1`+" "
                     solutions.append(solution)
                 chess_board[row][column] = '.'
         return len(solutions) > 0
 
 def recursive_backtracking_step_by_step(column):
     global temp_solution
+    global chess_board
     if column == len(chess_board):
         return True
     else:
         for row in range(len(chess_board)):
+            prev_solution = temp_solution
             if legal_move(row, column):
                 chess_board[row][column] = 'Q'
-                temp_solution += `row+1`
+                temp_solution += "%d " % (row+1)
                 print_step(True)
                 if recursive_backtracking_step_by_step(column + 1) and column == len(chess_board)-1:
                     solutions.append(temp_solution)
-                temp_solution = temp_solution[:-1]
+                temp_solution = prev_solution
                 chess_board[row][column] = '.'
             else:
-                temp_solution += `row+1`
+                temp_solution += "%d " % (row+1)
                 print_step(False)
-                temp_solution = temp_solution[:-1]
+                temp_solution = prev_solution
         return len(solutions) > 0
 
 def legal_move(row, column):
-    for col in range(0, column+1):
+    for col in range(1, column+1):
         if row-col >= 0 and chess_board[row-col][column-col] == 'Q':
             return False
         if chess_board[row][column-col] == 'Q':
@@ -54,14 +56,15 @@ def legal_move(row, column):
 #====== Creation of Board =====================================================
 
 def print_step(legal):
+    strip_solution = temp_solution.strip().split(" ")
     for i in range(len(chess_board)):
-        if i < len(temp_solution)-1:
-            print temp_solution[i],
-        elif i == len(temp_solution)-1:
+        if i < len(strip_solution)-1:
+            print strip_solution[i],
+        elif i == len(strip_solution)-1:
             if legal:
-                print colored(temp_solution[i], 'green'),
+                print colored(strip_solution[i], 'green'),
             else:
-                print colored(temp_solution[i], 'red'),
+                print colored(strip_solution[i], 'red'),
         else:
             print '0',
     print ''
@@ -135,11 +138,12 @@ for i in range(len(user_input)):
         start_column = i
         break
     else:
-        temp_solution += user_input[i]
+        temp_solution += user_input[i]+" "
 solutions = []
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
 if solution_exists:
+    #print_first_board()
     for i in solutions:
         print i
     print ""
