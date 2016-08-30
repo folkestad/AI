@@ -53,8 +53,8 @@ def legal_move(row, column):
     for col in range(1, column+1):
         if row-col >= 0 and chess_board[row-col][column-col] == 'Q':
             return False
-        if chess_board[row][column-col] == 'Q':
-            return False
+        #if chess_board[row][column-col] == 'Q':
+        #    return False
         if row+col < len(chess_board) and chess_board[row+col][column-col] == 'Q':
             return False
     return True
