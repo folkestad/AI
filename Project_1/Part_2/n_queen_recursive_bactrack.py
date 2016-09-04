@@ -4,29 +4,29 @@ import time
 #====== Algorithm =============================================================
 
 def recursive_backtracking(column):
-    if column == len(chess_board):
+    if column == len(init_board):
         return True
     else:
-        for row in range(len(chess_board)):
+        for row in range(len(init_board)):
             if legal_move(row, column):
-                chess_board[row][column] = 'Q'
-                if recursive_backtracking(column + 1) and column == len(chess_board)-1:
+                init_board[row][column] = 'Q'
+                if recursive_backtracking(column + 1) and column == len(init_board)-1:
                     solution = ""
-                    for i in range(len(chess_board)):
-                        for j in range(len(chess_board)):
-                            if chess_board[i][j] == 'Q':
+                    for i in range(len(init_board)):
+                        for j in range(len(init_board)):
+                            if init_board[i][j] == 'Q':
                                 solution += `i+1`+" "
                     solutions.append(solution)
-                chess_board[row][column] = '.'
+                init_board[row][column] = '.'
         return len(solutions) > 0
 
 def recursive_backtracking_step_by_step(column):
     global temp_solution
-    global chess_board
-    if column == len(chess_board):
+    global init_board
+    if column == len(init_board):
         return True
     else:
-        for row in range(len(chess_board)):
+        for row in range(len(init_board)):
             if row in solution_set:
                 continue
             else:
@@ -34,13 +34,13 @@ def recursive_backtracking_step_by_step(column):
                 solution_set.add(row)
                 if legal_move(row, column):
 
-                    chess_board[row][column] = 'Q'
+                    init_board[row][column] = 'Q'
                     temp_solution += "%d " % (row+1)
                     #print_step(True)
-                    if recursive_backtracking_step_by_step(column + 1) and column == len(chess_board)-1:
+                    if recursive_backtracking_step_by_step(column + 1) and column == len(init_board)-1:
                         solutions.append(temp_solution)
                     temp_solution = prev_solution
-                    chess_board[row][column] = '.'
+                    init_board[row][column] = '.'
 
                 else:
                     temp_solution += "%d " % (row+1)
@@ -51,11 +51,11 @@ def recursive_backtracking_step_by_step(column):
 
 def legal_move(row, column):
     for col in range(1, column+1):
-        if row-col >= 0 and chess_board[row-col][column-col] == 'Q':
+        if row-col >= 0 and init_board[row-col][column-col] == 'Q':
             return False
-        #if chess_board[row][column-col] == 'Q':
+        #if init_board[row][column-col] == 'Q':
         #    return False
-        if row+col < len(chess_board) and chess_board[row+col][column-col] == 'Q':
+        if row+col < len(init_board) and init_board[row+col][column-col] == 'Q':
             return False
     return True
 
@@ -65,7 +65,7 @@ def legal_move(row, column):
 
 def print_step(legal):
     strip_solution = temp_solution.strip().split(" ")
-    for i in range(len(chess_board)):
+    for i in range(len(init_board)):
         if i < len(strip_solution)-1:
             print strip_solution[i],
         elif i == len(strip_solution)-1:
@@ -78,21 +78,21 @@ def print_step(legal):
     print ''
 
 def print_board():
-    rownumber = len(chess_board)
+    rownumber = len(init_board)
     print ' ',
-    for i in range(len(chess_board)):
+    for i in range(len(init_board)):
         print chr(97+i),
     print ""
 
-    for i in range(len(chess_board)-1, -1, -1):
+    for i in range(len(init_board)-1, -1, -1):
         print rownumber,
-        for j in range(len(chess_board)):
-            print chess_board[i][j],
+        for j in range(len(init_board)):
+            print init_board[i][j],
         print rownumber
         rownumber -= 1
 
     print ' ',
-    for i in range(len(chess_board)):
+    for i in range(len(init_board)):
         print chr(97+i),
     print ""
 
@@ -122,15 +122,15 @@ def user_interaction():
     return user_input
 
 def create_board(user_input):
-    chess_board = []
+    init_board = []
     for i in range(len(user_input)):
-        chess_board.append([])
+        init_board.append([])
         for j in range(len(user_input)):
-            chess_board[i].append('.')
+            init_board[i].append('.')
     for i in range(len(user_input)):
         if user_input[i] != '0':
-            chess_board[int(user_input[i])-1][i] = 'Q'
-    return chess_board
+            init_board[int(user_input[i])-1][i] = 'Q'
+    return init_board
 
 #==============================================================================
 
@@ -139,7 +139,7 @@ def create_board(user_input):
 user_input = user_interaction()
 start = time.time()
 print ""
-chess_board = create_board(user_input)
+init_board = create_board(user_input)
 start_column = 0
 temp_solution = ''
 solution_set = set()
