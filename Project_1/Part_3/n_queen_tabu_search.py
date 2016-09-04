@@ -1,5 +1,5 @@
 
-from termcolor import colored
+from termcolor import
 
 #====== Algorithm =============================================================
 
@@ -11,16 +11,15 @@ def tabu_search(init_solution):
 
     while not stop():
         neighborhood = get_neighbors(best_neighbor)
-        #print("bn", convert_list_to_string(best_neighbor))
-        # for n in neighborhood:
-        #     print(convert_list_to_string(n))
-        #     print(fitness(n))
-        # print
         best_candidate = None
         for candidate in neighborhood:
+            #if candidate == None:
+
             if convert_list_to_string(candidate) in tabu_short_term_memory:
-                #print("in tm")
                 continue
+            if convert_list_to_string(candidate) in tabu_long_term_memory:
+                if tabu_long_term_memory[convert_list_to_string(candidate)] >= 6:
+                    continue
             if best_candidate == None:
                 best_candidate = candidate
             if fitness(best_candidate) >= fitness(candidate): #candidate has fewer hits
@@ -29,10 +28,7 @@ def tabu_search(init_solution):
                 tabu_long_term_memory[convert_list_to_string(best_candidate)] += 1
             else:
                 tabu_long_term_memory[convert_list_to_string(best_candidate)] = 1
-        #print("bc: ", convert_list_to_string(best_candidate))
         tabu_short_term_memory = add_to_memory(convert_list_to_string(best_candidate), tabu_short_term_memory)
-        # for i in tabu_short_term_memory:
-        #     print convert_list_to_string(i)
         best_neighbor = best_candidate
     print "Done"
 
@@ -47,6 +43,7 @@ def add_to_memory(candidate, tabu_short_term_memory):
 
 def fitness(candidate):
     global solution_set
+    global counter
     collisions = 0
     for col_queen in range(len(candidate)-1, 0, -1):
         for row_queen in range(len(candidate)):
@@ -59,10 +56,11 @@ def fitness(candidate):
                     if row_queen+col < len(candidate) and candidate[row_queen+col][col_queen-col] == 'Q':
                         collisions += 1
     # print collisions
-    if collisions == 0 and candidate not in solutions:
+    if collisions == 0 and convert_list_to_string(candidate) not in solutions:
         solutions.append(convert_list_to_string(candidate))
         solution_set.add(convert_list_to_string(candidate))
-        print "Solution: ", solutions[len(solutions)-1]
+        counter += 1
+        print counter, ": ", solutions[len(solutions)-1], " ", len(solution_set)
     return collisions
 
 def get_neighbors(best_neighbor):
@@ -77,6 +75,10 @@ def swap(best_neighbor):
         neighbor[i-1] = temp
         neighborhood.append(neighbor)
     return neighborhood
+
+# def random_swap(best_neighbor):
+#     neighborhood = []
+#     for i in range()
 
 def stop():
     return len(solutions) >= 92
@@ -137,9 +139,17 @@ def user_interaction():
     return user_input
 
 def preprocessing():
-    pass # fixes so that no queen is on the same rownumber
+    # fixes so that no queen is on the same rownumber
+    global user_input
+    for i in range(len(user_input)):
+        for j in range(len(user_input)):
+            if int(user_input[i]) == int(user_input[j]) and i != j:
+                user_input[i] = str((int(user_input[i]) + 1) % len(user_input))
+
+
 
 max_tabu_memory_size = 1000
+counter = 0
 solutions = []
 solution_set = set()
 user_input = user_interaction()
