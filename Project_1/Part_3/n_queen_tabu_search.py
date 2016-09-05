@@ -1,5 +1,6 @@
 
 from termcolor import colored
+import sys
 
 #====== Algorithm =============================================================
 
@@ -31,6 +32,9 @@ def tabu_search(init_solution):
                 if tabu_long_term_memory[candidate_string] < max_number_of_visits:
                     best_candidate = create_board(candidate_string)
                     tabu_long_term_memory[candidate_string] += 1
+            if best_candidate == None:
+                print "\nCould not find any more solutions with the current memory settings."
+                sys.exit(0)
 
         tabu_short_term_memory = add_to_memory(convert_list_to_string(best_candidate), tabu_short_term_memory)
         best_neighbor = best_candidate
@@ -86,7 +90,23 @@ def swap(best_neighbor):
 #     for i in range()
 
 def stop():
-    return len(solutions) >= 92
+    if len(user_input) == 4:
+        return len(solutions) >= 2
+    elif len(user_input) == 5:
+        return len(solutions) >= 10
+    elif len(user_input) == 6:
+        return len(solutions) >= 4
+    elif len(user_input) == 7:
+        return len(solutions) >= 40
+    elif len(user_input) == 8:
+        return len(solutions) >= 92
+    elif len(user_input) == 9:
+        return len(solutions) >= 352
+    elif len(user_input) == 10:
+        return len(solutions) >= 724
+    else:
+        True
+
 
 def convert_list_to_string(candidate):
     string = ""
@@ -148,10 +168,12 @@ def preprocessing(user_input):
     preprocessing = set()
     for i in range(len(user_input)):
         preprocessing.add(user_input[i])
+    if len(user_input) == len(preprocessing):
+        return user_input
     for i in range(1, len(user_input)+1):
-        character = str(i).encode('utf-8')
-        print character
-        preprocessing.add(character)
+        if i not in preprocessing:
+            character = str(i).encode('utf-8')
+            preprocessing.add(character)
     preprocessing = ''.join(list(preprocessing))
     return preprocessing
 
