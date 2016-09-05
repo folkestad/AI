@@ -1,5 +1,5 @@
 
-from termcolor import
+from termcolor import colored
 
 #====== Algorithm =============================================================
 
@@ -13,12 +13,10 @@ def tabu_search(init_solution):
         neighborhood = get_neighbors(best_neighbor)
         best_candidate = None
         for candidate in neighborhood:
-            #if candidate == None:
-
             if convert_list_to_string(candidate) in tabu_short_term_memory:
                 continue
             if convert_list_to_string(candidate) in tabu_long_term_memory:
-                if tabu_long_term_memory[convert_list_to_string(candidate)] >= 6:
+                if tabu_long_term_memory[convert_list_to_string(candidate)] >= max_number_of_visits:
                     continue
             if best_candidate == None:
                 best_candidate = candidate
@@ -28,8 +26,15 @@ def tabu_search(init_solution):
                 tabu_long_term_memory[convert_list_to_string(best_candidate)] += 1
             else:
                 tabu_long_term_memory[convert_list_to_string(best_candidate)] = 1
+        if best_candidate == None:
+            for candidate_string in tabu_long_term_memory:
+                if tabu_long_term_memory[candidate_string] < max_number_of_visits:
+                    best_candidate = create_board(candidate_string)
+                    tabu_long_term_memory[candidate_string] += 1
+
         tabu_short_term_memory = add_to_memory(convert_list_to_string(best_candidate), tabu_short_term_memory)
         best_neighbor = best_candidate
+    print ""
     print "Done"
 
 def add_to_memory(candidate, tabu_short_term_memory):
@@ -138,25 +143,30 @@ def user_interaction():
     user_input = raw_input().replace(' ', '')
     return user_input
 
-def preprocessing():
+def preprocessing(user_input):
     # fixes so that no queen is on the same rownumber
-    global user_input
+    preprocessing = set()
     for i in range(len(user_input)):
-        for j in range(len(user_input)):
-            if int(user_input[i]) == int(user_input[j]) and i != j:
-                user_input[i] = str((int(user_input[i]) + 1) % len(user_input))
+        preprocessing.add(user_input[i])
+    for i in range(1, len(user_input)+1):
+        character = str(i).encode('utf-8')
+        print character
+        preprocessing.add(character)
+    preprocessing = ''.join(list(preprocessing))
+    return preprocessing
 
 
-
-max_tabu_memory_size = 1000
+max_tabu_memory_size = 100
+max_number_of_visits = 4
 counter = 0
 solutions = []
 solution_set = set()
 user_input = user_interaction()
-init_board = create_board(user_input)
+init_board = create_board(preprocessing(user_input))
 print_board(init_board)
 tabu_search(init_board)
+print ""
 print len(solutions)
-print len(solution_set)
+
 
 #==============================================================================
