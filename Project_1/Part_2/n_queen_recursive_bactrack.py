@@ -33,18 +33,16 @@ def recursive_backtracking_step_by_step(column):
                 prev_solution = temp_solution
                 solution_set.add(row)
                 if legal_move(row, column):
-
                     init_board[row][column] = 'Q'
                     temp_solution += "%d " % (row+1)
-                    #print_step(True)
+                    print_step(True)
                     if recursive_backtracking_step_by_step(column + 1) and column == len(init_board)-1:
                         solutions.append(temp_solution)
                     temp_solution = prev_solution
                     init_board[row][column] = '.'
-
                 else:
                     temp_solution += "%d " % (row+1)
-                    #print_step(False)
+                    print_step(False)
                     temp_solution = prev_solution
                 solution_set.remove(row)
         return len(solutions) > 0
@@ -64,18 +62,19 @@ def legal_move(row, column):
 #====== Creation of Board =====================================================
 
 def print_step(legal):
-    strip_solution = temp_solution.strip().split(" ")
-    for i in range(len(init_board)):
-        if i < len(strip_solution)-1:
-            print strip_solution[i],
-        elif i == len(strip_solution)-1:
-            if legal:
-                print colored(strip_solution[i], 'green'),
+    if print_steps:
+        strip_solution = temp_solution.strip().split(" ")
+        for i in range(len(init_board)):
+            if i < len(strip_solution)-1:
+                print strip_solution[i],
+            elif i == len(strip_solution)-1:
+                if legal:
+                    print colored(strip_solution[i], 'green'),
+                else:
+                    print colored(strip_solution[i], 'red'),
             else:
-                print colored(strip_solution[i], 'red'),
-        else:
-            print '0',
-    print ''
+                print '0',
+        print ''
 
 def print_board():
     rownumber = len(init_board)
@@ -137,6 +136,8 @@ def create_board(user_input):
 #====== Flow Controll =========================================================
 
 user_input = user_interaction()
+dimension = len(user_input)
+print_steps = False
 start = time.time()
 print ""
 init_board = create_board(user_input)

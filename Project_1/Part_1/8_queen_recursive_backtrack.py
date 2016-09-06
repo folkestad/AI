@@ -1,16 +1,24 @@
 #import Tkinter
+from termcolor import colored
 #====== Algorithm =============================================================
 
 def recursive_backtracking(column):
+    global temp_solution
     if column == len(init_board):
         return True
     else:
         for row in range(len(init_board)):
+            prev_solution = temp_solution
             if legal_move(row, column):
                 init_board[row][column] = 'Q'
+                temp_solution += "%d " % (row+1)
+                print_step(True)
                 if recursive_backtracking(column + 1):
                     return True
                 init_board[row][column] = '.'
+            temp_solution += "%d " % (row+1)
+            print_step(False)
+            temp_solution = prev_solution
         return False
 
 def legal_move(row, column):
@@ -26,6 +34,20 @@ def legal_move(row, column):
 #==============================================================================
 
 #====== Creation of Board =====================================================
+
+def print_step(legal):
+    strip_solution = temp_solution.strip().split(" ")
+    for i in range(len(init_board)):
+        if i < len(strip_solution)-1:
+            print strip_solution[i],
+        elif i == len(strip_solution)-1:
+            if legal:
+                print colored(strip_solution[i], 'green'),
+            else:
+                print colored(strip_solution[i], 'red'),
+        else:
+            print '0',
+    print ''
 
 def print_board():
     rownumber = len(init_board)
@@ -48,9 +70,9 @@ def user_interaction():
 
 def create_board(user_input):
     init_board = []
-    for i in range(len(user_input)):
+    for i in range(dimension):
         init_board.append(['.','.','.','.','.','.','.','.'])
-    for i in range(len(user_input)):
+    for i in range(dimension):
         if user_input[i] != '0':
             init_board[int(user_input[i])-1][i] = 'Q'
     return init_board
@@ -60,9 +82,17 @@ def create_board(user_input):
 #====== Flow Controll =========================================================
 
 user_input = user_interaction()
+dimension = len(user_input)
+temp_solution = ''
+for i in range(len(user_input)):
+    if user_input[i] == '0':
+        start_column = i
+        break
+    else:
+        temp_solution += user_input[i]+" "
 init_board = create_board(user_input)
 start_column = 0
-for i in range(len(user_input)):
+for i in range(dimension):
     if user_input[i] == '0':
         start_column = i
         break

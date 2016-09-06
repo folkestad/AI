@@ -4,6 +4,15 @@ import sys
 
 #====== Algorithm =============================================================
 
+def simulated_annealing():
+    neighborhood = get_neighbors(best_neighbor)
+    best_candidate = None
+    for candidate in neighborhood:
+        continue
+
+
+def fitness():
+    pass
 
 #====== Printing of Board =====================================================
 
