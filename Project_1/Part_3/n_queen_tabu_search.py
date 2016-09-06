@@ -1,6 +1,7 @@
 
 from termcolor import colored
 import sys
+import time
 
 #====== Algorithm =============================================================
 
@@ -8,25 +9,30 @@ def tabu_search(init_solution):
     global solution_set
     best_neighbor = init_solution
     tabu_short_term_memory = []
-    tabu_long_term_memory = {convert_list_to_string(init_solution): 1}
+    tabu_long_term_memory = {convert_list_to_tuple(init_solution): 1}
+    iteration = 0
 
     while not stop():
+        iteration += 1
+        if iteration > max_iterations:
+            print "The maximum number of iterations is reached"
+            break
         neighborhood = get_neighbors(best_neighbor)
         best_candidate = None
         for candidate in neighborhood:
-            if convert_list_to_string(candidate) in tabu_short_term_memory:
+            if convert_list_to_tuple(candidate) in tabu_short_term_memory:
                 continue
-            if convert_list_to_string(candidate) in tabu_long_term_memory:
-                if tabu_long_term_memory[convert_list_to_string(candidate)] >= max_number_of_visits:
+            if convert_list_to_tuple(candidate) in tabu_long_term_memory:
+                if tabu_long_term_memory[convert_list_to_tuple(candidate)] >= max_number_of_visits:
                     continue
             if best_candidate == None:
                 best_candidate = candidate
             if fitness(best_candidate) >= fitness(candidate): #candidate has fewer hits
                 best_candidate = candidate
-            if convert_list_to_string(best_candidate) in tabu_long_term_memory:
-                tabu_long_term_memory[convert_list_to_string(best_candidate)] += 1
+            if convert_list_to_tuple(best_candidate) in tabu_long_term_memory:
+                tabu_long_term_memory[convert_list_to_tuple(best_candidate)] += 1
             else:
-                tabu_long_term_memory[convert_list_to_string(best_candidate)] = 1
+                tabu_long_term_memory[convert_list_to_tuple(best_candidate)] = 1
         if best_candidate == None:
             for candidate_string in tabu_long_term_memory:
                 if tabu_long_term_memory[candidate_string] < max_number_of_visits:
@@ -36,7 +42,7 @@ def tabu_search(init_solution):
                 print "\nCould not find any more solutions with the current memory settings."
                 sys.exit(0)
 
-        tabu_short_term_memory = add_to_memory(convert_list_to_string(best_candidate), tabu_short_term_memory)
+        tabu_short_term_memory = add_to_memory(convert_list_to_tuple(best_candidate), tabu_short_term_memory)
         best_neighbor = best_candidate
     print ""
     print "Done"
@@ -65,11 +71,14 @@ def fitness(candidate):
                     if row_queen+col < len(candidate) and candidate[row_queen+col][col_queen-col] == 'Q':
                         collisions += 1
     # print collisions
-    if collisions == 0 and convert_list_to_string(candidate) not in solutions:
-        solutions.append(convert_list_to_string(candidate))
-        solution_set.add(convert_list_to_string(candidate))
+    if collisions == 0 and convert_list_to_tuple(candidate) not in solutions:
+        solutions.append(convert_list_to_tuple(candidate))
+        solution_set.add(convert_list_to_tuple(candidate))
         counter += 1
-        print counter, ": ", solutions[len(solutions)-1], " ", len(solution_set)
+        print counter, ": ",
+        for i in solutions[len(solutions)-1]:
+            print i, " ",
+        print " :", len(solution_set)
     return collisions
 
 def get_neighbors(best_neighbor):
@@ -104,17 +113,23 @@ def stop():
         return len(solutions) >= 352
     elif len(user_input) == 10:
         return len(solutions) >= 724
+    elif len(user_input) == 16:
+        return len(solutions) >= 14772512
+    elif len(user_input) == 18:
+        return len(solutions) >= 666090624
+    elif len(user_input) == 20:
+        return len(solutions) >= 39029188884
     else:
         True
 
 
-def convert_list_to_string(candidate):
-    string = ""
+def convert_list_to_tuple(candidate):
+    list_representation = []
     for col in range(len(candidate)):
         for row in range(len(candidate)):
             if candidate[row][col] == 'Q':
-                string += `row+1`
-    return string
+                list_representation.append(row+1)
+    return tuple(list_representation)
 
 #==============================================================================
 
@@ -160,8 +175,11 @@ def create_board(user_input):
 
 def user_interaction():
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
-    user_input = raw_input().replace(' ', '')
-    return user_input
+    user_input = raw_input().split(' ')
+    int_list = []
+    for i in user_input:
+        int_list.append(int(i))
+    return tuple(int_list)
 
 def preprocessing(user_input):
     # fixes so that no queen is on the same rownumber
@@ -174,21 +192,26 @@ def preprocessing(user_input):
         if i not in preprocessing:
             character = str(i).encode('utf-8')
             preprocessing.add(character)
-    preprocessing = ''.join(list(preprocessing))
+    preprocessing = tuple(preprocessing)
     return preprocessing
 
 
 max_tabu_memory_size = 100
 max_number_of_visits = 4
+max_iterations = 10000
 counter = 0
 solutions = []
 solution_set = set()
 user_input = user_interaction()
+start = time.time()
 init_board = create_board(preprocessing(user_input))
 print_board(init_board)
 tabu_search(init_board)
 print ""
-print len(solutions)
+print "Number of solutions: ", len(solutions)
+print ""
+end = time.time()
+print end-start
 
 
 #==============================================================================
