@@ -8,8 +8,9 @@ import time
 def tabu_search(init_solution):
     global solution_set
     best_neighbor = init_solution
-    tabu_short_term_memory = []
-    tabu_long_term_memory = {convert_list_to_tuple(init_solution): 1}
+    short_term_memory = []
+    intermediate_term_memory = {convert_list_to_tuple(init_solution): 1}
+    long_term_memory = {convert_list_to_tuple(init_solution): 1}
     iteration = 0
 
     while not stop():
@@ -20,41 +21,52 @@ def tabu_search(init_solution):
         neighborhood = get_neighbors(best_neighbor)
         best_candidate = None
         for candidate in neighborhood:
-            if convert_list_to_tuple(candidate) in tabu_short_term_memory:
+            if convert_list_to_tuple(candidate) in short_term_memory:
                 continue
-            if convert_list_to_tuple(candidate) in tabu_long_term_memory:
-                if tabu_long_term_memory[convert_list_to_tuple(candidate)] >= max_number_of_visits:
+            if convert_list_to_tuple(candidate) in long_term_memory:
+                if long_term_memory[convert_list_to_tuple(candidate)] >= max_number_of_visits:
                     continue
             if best_candidate == None:
                 best_candidate = candidate
             if fitness(best_candidate) >= fitness(candidate): #candidate has fewer hits
                 best_candidate = candidate
-            if convert_list_to_tuple(best_candidate) in tabu_long_term_memory:
-                tabu_long_term_memory[convert_list_to_tuple(best_candidate)] += 1
-            else:
-                tabu_long_term_memory[convert_list_to_tuple(best_candidate)] = 1
+
+            add_to_long_term_memories(best_candidate, intermediate_term_memory, long_term_memory)
+
         if best_candidate == None:
-            for candidate_string in tabu_long_term_memory:
-                if tabu_long_term_memory[candidate_string] < max_number_of_visits:
-                    best_candidate = create_board(candidate_string)
-                    tabu_long_term_memory[candidate_string] += 1
+            best_candidate = create_board(next(dictionary.itervalues()))
+            intermediate_term_memory[candidate_string] += 1
             if best_candidate == None:
                 print "\nCould not find any more solutions with the current memory settings."
                 sys.exit(0)
 
-        tabu_short_term_memory = add_to_memory(convert_list_to_tuple(best_candidate), tabu_short_term_memory)
+        short_term_memory = add_to_short_term_memory(convert_list_to_tuple(best_candidate), short_term_memory)
         best_neighbor = best_candidate
     print ""
     print "Done"
 
-def add_to_memory(candidate, tabu_short_term_memory):
-    memory = list(tabu_short_term_memory)
-    if len(tabu_short_term_memory) == max_tabu_memory_size:
-        memory = tabu_short_term_memory[:-1]
+def add_to_short_term_memory(candidate, short_term_memory):
+    memory = list(short_term_memory)
+    if len(short_term_memory) == max_tabu_memory_size:
+        memory = short_term_memory[:-1]
         memory.insert(0, candidate)
     else:
         memory.insert(0, candidate)
     return memory
+
+def add_to_long_term_memories(best_candidate, intermediate_term_memory, long_term_memory):
+    if convert_list_to_tuple(best_candidate) in intermediate_term_memory:
+        if intermediate_term_memory[convert_list_to_tuple(best_candidate)] < max_number_of_visits:
+            intermediate_term_memory[convert_list_to_tuple(best_candidate)] += 1
+        else:
+            del intermediate_term_memory[convert_list_to_tuple(best_candidate)]
+    else:
+        if convert_list_to_tuple(best_candidate) not in long_term_memory:
+            intermediate_term_memory[convert_list_to_tuple(best_candidate)] = 1
+    if convert_list_to_tuple(best_candidate) in long_term_memory:
+        long_term_memory[convert_list_to_tuple(best_candidate)] += 1
+    else:
+        long_term_memory[convert_list_to_tuple(best_candidate)] = 1
 
 def fitness(candidate):
     global solution_set
