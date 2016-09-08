@@ -22,7 +22,6 @@ def simulated_annealing(init_state, init_temp, temp_stop):
             temp = temp_decay(temp)
         state = get_state(state)
         temp = init_temp
-        
 
 def get_state(state):
     return random_state(state)
