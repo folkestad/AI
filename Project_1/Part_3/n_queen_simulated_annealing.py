@@ -3,34 +3,50 @@ from termcolor import colored
 import sys
 import math
 import random
+import time
 
 #====== Algorithm =============================================================
 
 def simulated_annealing(init_state, init_temp, temp_stop):
     temp = init_temp
     state = init_state
-    while stop():
+    while not stop():
         while temp > temp_stop:
-        new_state = get_state(state)
-        delta_E = fitness(state)-fitness(new_state)
-        if delta_E < 0:
-            state = new_state
-        else:
-            if prob_of_acceptance(new_state, temp):
+            new_state = get_state(state)
+            delta_E = fitness(state)-fitness(new_state)
+            if delta_E < 0:
                 state = new_state
-        temp = temp_decay(temp)
+            else:
+                if prob_of_acceptance(fitness(new_state), temp):
+                    state = new_state
+            temp = temp_decay(temp)
+        state = get_state(state)
+        temp = init_temp
 
 def get_state(state):
     return random_state(state)
 
 def random_state(state):
-    pass
+    new_state = list(state)
+    first = 0
+    second = 0
+    while first == second:
+        first = random.randint(0,dimension-1)
+        second = random.randint(0, dimension-1)
+    first_list = new_state[first]
+    second_list = new_state[second]
+    new_state[first] = second_list
+    new_state[second] = first_list
+    if convert_board_to_tuple(new_state) in solutions:
+        return random_state(state)
+    return new_state
+
 
 def temp_decay(temp):
-    temp * 0.95
+    return temp * 0.95
 
-def prob_of_acceptance(delta_E):
-    return math.exp(-delta_E/temp) > 0.#random.uniform(0,1)
+def prob_of_acceptance(delta_E, temp):
+    return math.exp((-delta_E)/temp) > 0.2#random.uniform(0,1)
 
 def fitness(state):
     global solution_set
@@ -44,12 +60,11 @@ def fitness(state):
                         collisions += 1
                     if state[row_queen][col_queen-col] == 'Q':
                         collisions += 1
-                    if row_queen+col < len(candidate) and state[row_queen+col][col_queen-col] == 'Q':
+                    if row_queen+col < len(state) and state[row_queen+col][col_queen-col] == 'Q':
                         collisions += 1
-    # print collisions
-    if collisions == 0 and convert_list_to_tuple(state) not in solutions:
-        solutions.append(convert_list_to_tuple(state))
-        solution_set.add(convert_list_to_tuple(state))
+    if collisions == 0 and convert_board_to_tuple(state) not in solutions:
+        solutions.append(convert_board_to_tuple(state))
+        solution_set.add(convert_board_to_tuple(state))
         counter += 1
         print counter, ": ",
         for i in solutions[len(solutions)-1]:
@@ -81,11 +96,11 @@ def stop():
     else:
         True
 
-def convert_list_to_tuple(candidate):
+def convert_board_to_tuple(state):
     list_representation = []
-    for col in range(len(candidate)):
-        for row in range(len(candidate)):
-            if candidate[row][col] == 'Q':
+    for col in range(len(state)):
+        for row in range(len(state)):
+            if state[row][col] == 'Q':
                 list_representation.append(row+1)
     return tuple(list_representation)
 
