@@ -19,30 +19,6 @@ def select_parents(generation):
     pass
 
 def fitness(state):
-    global solution_set
-    global counter
-    collisions = 0
-    for col_queen in range(len(state)-1, 0, -1):
-        for row_queen in range(len(state)):
-            if state[row_queen][col_queen] == 'Q':
-                for col in range(1, col_queen+1):
-                    if row_queen-col >= 0 and state[row_queen-col][col_queen-col] == 'Q':
-                        collisions += 1
-                    if state[row_queen][col_queen-col] == 'Q':
-                        collisions += 1
-                    if row_queen+col < len(state) and state[row_queen+col][col_queen-col] == 'Q':
-                        collisions += 1
-    if collisions == 0 and convert_board_to_tuple(state) not in solutions:
-        solutions.append(convert_board_to_tuple(state))
-        solution_set.add(convert_board_to_tuple(state))
-        counter += 1
-        print counter, "\t:",
-        for i in solutions[len(solutions)-1]:
-            print i, "\t",
-        print " :", len(solution_set)
-    return collisions
-
-def fitness_tuple(state):
     collisions = 0
     for queen in range(len(state)-1):
         for other_queen in range(queen, len(state)-1):
@@ -99,14 +75,6 @@ def stop():
         return len(solutions) >= 39029188884
     else:
         True
-
-def convert_board_to_tuple(state):
-    list_representation = []
-    for col in range(len(state)):
-        for row in range(len(state)):
-            if state[row][col] == 'Q':
-                list_representation.append(row+1)
-    return tuple(list_representation)
 
 #====== Printing of Board =====================================================
 
@@ -178,8 +146,8 @@ solution_set = set()
 user_input = user_interaction()
 dimension = len(user_input)
 start = time.time()
-init_board = create_board(preprocessing(user_input))
-print_board(init_board)
+init_board = preprocessing(user_input)
+print_board(create_board(init_board))
 simulated_annealing(init_board, 1000, 0.1)
 print ""
 print "Number of solutions: ", len(solutions)
