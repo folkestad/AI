@@ -13,11 +13,11 @@ def simulated_annealing(init_state, init_temp, temp_stop):
     while not stop():
         while temp > temp_stop:
             new_state = get_state(state)
-            delta_E = fitness(state)-fitness(new_state)
+            delta_E = fitness_tuple(state)-fitness_tuple(new_state)
             if delta_E < 0:
                 state = new_state
             else:
-                if prob_of_acceptance(fitness(new_state), temp):
+                if prob_of_acceptance(fitness_tuple(new_state), temp):
                     state = new_state
             temp = temp_decay(temp)
         state = get_state(state)
@@ -37,9 +37,9 @@ def random_state(state):
     second_list = new_state[second]
     new_state[first] = second_list
     new_state[second] = first_list
-    if convert_board_to_tuple(new_state) in solutions:
-        return random_state(state)
-    return new_state
+    while new_state in solutions:
+        new_state = random_state(state)
+    return tuple(new_state)
 
 
 def temp_decay(temp):
@@ -48,44 +48,22 @@ def temp_decay(temp):
 def prob_of_acceptance(delta_E, temp):
     return math.exp((-delta_E)/temp) > 0.2#random.uniform(0,1)
 
-def fitness(state):
-    global solution_set
-    global counter
-    collisions = 0
-    for col_queen in range(len(state)-1, 0, -1):
-        for row_queen in range(len(state)):
-            if state[row_queen][col_queen] == 'Q':
-                for col in range(1, col_queen+1):
-                    if row_queen-col >= 0 and state[row_queen-col][col_queen-col] == 'Q':
-                        collisions += 1
-                    if state[row_queen][col_queen-col] == 'Q':
-                        collisions += 1
-                    if row_queen+col < len(state) and state[row_queen+col][col_queen-col] == 'Q':
-                        collisions += 1
-    if collisions == 0 and convert_board_to_tuple(state) not in solutions:
-        solutions.append(convert_board_to_tuple(state))
-        solution_set.add(convert_board_to_tuple(state))
-        counter += 1
-        print counter, ": ",
-        for i in solutions[len(solutions)-1]:
-            print i, " ",
-        print ":", len(solution_set)
-    return collisions
-
 def fitness_tuple(state):
     collisions = 0
-    for queen in range(len(state)-1):
-        for other_queen in range(queen, len(state)-1):
-            if state[queen] == state[other_queen]:
+    for queen_pos in range(len(state)-1):
+        counter = 1
+        for other_queen_pos in range(queen_pos+1, len(state)):
+            if state[queen_pos] == state[other_queen_pos]:
                 collisions += 1
-            if state[queen]+other_queen <= len(state) and state[queen]+other_queen == state[other_queen]:
+            if state[queen_pos]+counter == state[other_queen_pos]:
                 collisions += 1
-            if state[queen]-other_queen > 0 and state[queen]-other_queen == state[other_queen]:
+            if state[queen_pos]-counter == state[other_queen_pos]:
                 collisions += 1
-    if collisions == 0:
-        solutions.append(convert_board_to_tuple(state))
-        solution_set.add(convert_board_to_tuple(state))
-        print counter, "\t:",
+            counter += 1
+    if collisions == 0 and state not in solutions:
+        solutions.append(state)
+        solution_set.add(state)
+        print len(solutions), "\t:",
         for i in solutions[len(solutions)-1]:
             print i, "\t",
         print " :", len(solution_set)
@@ -114,14 +92,6 @@ def stop():
         return len(solutions) >= 39029188884
     else:
         True
-
-def convert_board_to_tuple(state):
-    list_representation = []
-    for col in range(len(state)):
-        for row in range(len(state)):
-            if state[row][col] == 'Q':
-                list_representation.append(row+1)
-    return tuple(list_representation)
 
 #====== Printing of Board =====================================================
 
@@ -193,8 +163,8 @@ solution_set = set()
 user_input = user_interaction()
 dimension = len(user_input)
 start = time.time()
-init_board = create_board(preprocessing(user_input))
-print_board(init_board)
+init_board = preprocessing(user_input)
+print_board(create_board(init_board))
 simulated_annealing(init_board, 1000, 0.1)
 print ""
 print "Number of solutions: ", len(solutions)
