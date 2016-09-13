@@ -4,7 +4,6 @@ import sys
 import math
 import random
 import time
-import operator
 
 #====== Algorithm =============================================================
 
@@ -36,6 +35,10 @@ def select_parents(generation):
     random_other_parent_pos = random.randint(0, fit_sum-1)
     parent = prob_wheel[random_parent_pos]
     other_parent = prob_wheel[random_other_parent_pos]
+    while other_parent == parent:
+        other_parent = prob_wheel[random.randint(0, fit_sum-1)]
+    if len(solutions) < 1:
+        print "Parent: ", parent, " other_parent: ", other_parent
     return parent, other_parent
 
 def crossover(parent, other_parent):
@@ -177,8 +180,12 @@ def user_interaction():
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
     int_list = []
-    for i in user_input:
-        int_list.append(int(i))
+    if len(user_input) < 3:
+        for i in range(int(user_input[0])):
+            int_list.append(i+1)
+    else:
+        for i in user_input:
+            int_list.append(int(i))
     return tuple(int_list)
 
 def preprocessing(user_input):
