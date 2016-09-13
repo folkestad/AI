@@ -148,8 +148,12 @@ def user_interaction():
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
     int_list = []
-    for i in user_input:
-        int_list.append(int(i))
+    if len(user_input) < 3:
+        for i in range(int(user_input[0])):
+            int_list.append(i+1)
+    else:
+        for i in user_input:
+            int_list.append(int(i))
     return tuple(int_list)
 
 def preprocessing(user_input):

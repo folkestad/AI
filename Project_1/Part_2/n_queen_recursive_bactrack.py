@@ -35,14 +35,16 @@ def recursive_backtracking_step_by_step(column):
                 if legal_move(row, column):
                     init_board[row][column] = 'Q'
                     temp_solution += "%d " % (row+1)
-                    print_step(True)
+                    if len(solutions) < 1:
+                        print_step(True)
                     if recursive_backtracking_step_by_step(column + 1) and column == len(init_board)-1:
                         solutions.append(temp_solution)
                     temp_solution = prev_solution
                     init_board[row][column] = '.'
                 else:
                     temp_solution += "%d " % (row+1)
-                    print_step(False)
+                    if len(solutions) < 1:
+                        print_step(False)
                     temp_solution = prev_solution
                 solution_set.remove(row)
         return len(solutions) > 0
@@ -137,7 +139,7 @@ def create_board(user_input):
 
 user_input = user_interaction()
 dimension = len(user_input)
-print_steps = False
+print_steps = True
 start = time.time()
 print ""
 init_board = create_board(user_input)

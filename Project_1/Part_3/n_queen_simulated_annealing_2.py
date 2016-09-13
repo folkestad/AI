@@ -10,9 +10,13 @@ import time
 def simulated_annealing(init_state, init_temp, temp_stop):
     temp = init_temp
     state = init_state
+    iteration = 0
     while not stop():
         while temp > temp_stop:
+            iteration += 1
             new_state = get_state(state)
+            if len(solutions) < 1:
+                print new_state
             delta_E = fitness_tuple(state)-fitness_tuple(new_state)
             if delta_E < 0:
                 state = new_state
@@ -137,8 +141,12 @@ def user_interaction():
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
     int_list = []
-    for i in user_input:
-        int_list.append(int(i))
+    if len(user_input) < 3:
+        for i in range(int(user_input[0])):
+            int_list.append(i+1)
+    else:
+        for i in user_input:
+            int_list.append(int(i))
     return tuple(int_list)
 
 def preprocessing(user_input):
