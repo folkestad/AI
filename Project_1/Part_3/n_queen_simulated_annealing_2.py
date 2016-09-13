@@ -15,15 +15,20 @@ def simulated_annealing(init_state, init_temp, temp_stop):
         while temp > temp_stop:
             iteration += 1
             new_state = get_state(state)
-            if len(solutions) < 1:
-                print new_state
+            solution_size = len(solutions)
             delta_E = fitness_tuple(state)-fitness_tuple(new_state)
             if delta_E < 0:
+                if len(solutions) < 1:
+                    print new_state
                 state = new_state
             else:
                 if prob_of_acceptance(fitness_tuple(new_state), temp):
+                    if len(solutions) < 1:
+                        print new_state
                     state = new_state
-            temp = temp_decay(temp)
+            if len(solutions) > solution_size:
+                break
+            temp = temp_decay(temp, iteration)
         state = get_state(state)
         temp = init_temp
 
@@ -32,10 +37,9 @@ def get_state(state):
 
 def random_state(state):
     new_state = list(state)
-    first = 0
-    second = 0
+    first = random.randint(0,dimension-1)
+    second = random.randint(0,dimension-1)
     while first == second:
-        first = random.randint(0,dimension-1)
         second = random.randint(0, dimension-1)
     first_list = new_state[first]
     second_list = new_state[second]
@@ -45,12 +49,31 @@ def random_state(state):
         new_state = random_state(state)
     return tuple(new_state)
 
+def random_state_2(state):
+    new_state = list(state)
+    first = random.randint(0,dimension-1)
+    second = random.randint(0,dimension-1)
+    third = random.randint(0,dimension-1)
+    while first == second:
+        second = random.randint(0, dimension-1)
+    while first == third or second == third:
+        third = random.randint(0, dimension-1)
+    first_list = new_state[first]
+    second_list = new_state[second]
+    third_list = new_state[third]
+    new_state[first] = third_list
+    new_state[second] = first_list
+    new_state[third] = second_list
+    while new_state in solutions:
+        new_state = random_state(state)
+    return tuple(new_state)
 
-def temp_decay(temp):
-    return temp * 0.95
+
+def temp_decay(temp, iteration):
+    return math.exp(-0.05*math.log1p(iteration))#temp * 0.95#math.exp(-0.05*math.log1p(iteration))
 
 def prob_of_acceptance(delta_E, temp):
-    return math.exp((-delta_E)/temp) > 0.2#random.uniform(0,1)
+    return math.exp((-delta_E)/temp)*0.3 < random.random
 
 def fitness_tuple(state):
     collisions = 0
@@ -173,7 +196,7 @@ dimension = len(user_input)
 start = time.time()
 init_board = preprocessing(user_input)
 print_board(create_board(init_board))
-simulated_annealing(init_board, 1000, 0.1)
+simulated_annealing(init_board, 1000, 0.25)
 print ""
 print "Number of solutions: ", len(solutions)
 print ""
