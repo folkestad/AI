@@ -4,40 +4,49 @@ import sys
 import math
 import random
 import time
+import operator
 
 #====== Algorithm =============================================================
 
-def genetic_algorithm(init_parent):
-    generation_number = 1
-    parent = init_parent
-    other_parent = random_parent(parent)
-    generation = generate_population(parent, other_parent)
+def genetic_algorithm(init_state, offspring_limit):
+    #generation_number = 1
+    generation = generate_init_population(init_state)
     while not stop():
         parent, other_parent = select_parents(generation)
+        offspring = generate_offspring(parent, other_parent, offspring_limit)
+        #evaluate_offspring(offspring)
+        generation = offspring#generate_generation()
+        #generation_number += 1
 
 def select_parents(generation):
-    pass
+    fit_sum = 0
+    prob_wheel = []
+    for g in generation:
+        fit_sum += (dimension-fitness(g))
+    child = 0
+    for i in range(fit_sum):
+        fit = dimension-fitness(generation[child])
+        for j in range(fit):
+            prob_wheel.append(generation[child])
+        if child < len(generation)-1:
+            child += 1
+        else:
+            break
+    random_parent_pos = random.randint(0, fit_sum-1)
+    random_other_parent_pos = random.randint(0, fit_sum-1)
+    parent = prob_wheel[random_parent_pos]
+    other_parent = prob_wheel[random_other_parent_pos]
+    return parent, other_parent
 
-def fitness(state):
-    collisions = 0
-    for queen in range(len(state)-1):
-        for other_queen in range(queen, len(state)-1):
-            if state[queen] == state[other_queen]:
-                collisions += 1
-            if state[queen]+other_queen <= len(state) and state[queen]+other_queen == state[other_queen]:
-                collisions += 1
-            if state[queen]-other_queen > 0 and state[queen]-other_queen == state[other_queen]:
-                collisions += 1
-    if collisions == 0:
-        solutions.append(convert_board_to_tuple(state))
-        solution_set.add(convert_board_to_tuple(state))
-        print counter, "\t:",
-        for i in solutions[len(solutions)-1]:
-            print i, "\t",
-        print " :", len(solution_set)
-    return collisions
+def crossover(parent, other_parent):
+    offspring = []
+    offspring.extend(parent[:2])
+    for i in other_parent:
+        if i not in offspring:
+            offspring.append(i)
+    return offspring
 
-def random_parent(state):
+def mutate(state):
     new_state = list(state)
     first = 0
     second = 0
@@ -48,9 +57,57 @@ def random_parent(state):
     second_list = new_state[second]
     new_state[first] = second_list
     new_state[second] = first_list
-    if convert_board_to_tuple(new_state) in solutions:
-        return random_state(state)
-    return new_state
+    return tuple(new_state)
+
+def generate_offspring(parent, other_parent, offspring_limit):
+    offspring = []
+    child = crossover(parent, other_parent)
+    for o in range(10):
+        offspring.append(mutate(child))
+    return list(set(offspring))
+
+def fitness(state):
+    collisions = 0
+    for queen_pos in range(len(state)-1):
+        counter = 1
+        up = False
+        straight = False
+        down = False
+        for other_queen_pos in range(queen_pos+1, len(state)):
+            if state[queen_pos] == state[other_queen_pos] and not straight:
+                collisions += 1
+                straight = True
+            if state[queen_pos]+counter == state[other_queen_pos] and not up:
+                collisions += 1
+                up = True
+            if state[queen_pos]-counter == state[other_queen_pos] and not down:
+                collisions += 1
+                down = True
+            counter += 1
+    if collisions == 0 and state not in solutions:
+        solutions.append(state)
+        solution_set.add(state)
+        print len(solutions), "\t:",
+        for i in solutions[len(solutions)-1]:
+            print i, "\t",
+        print " :", len(solution_set)
+    return collisions
+
+def generate_init_population(state):
+    generation = []
+    for i in range(6):
+        new_state = list(state)
+        first = 0
+        second = 0
+        while first == second:
+            first = random.randint(0,dimension-1)
+            second = random.randint(0, dimension-1)
+        first_list = new_state[first]
+        second_list = new_state[second]
+        new_state[first] = second_list
+        new_state[second] = first_list
+        generation.append(tuple(new_state))
+    return generation
 
 def stop():
     if dimension == 4:
@@ -148,7 +205,7 @@ dimension = len(user_input)
 start = time.time()
 init_board = preprocessing(user_input)
 print_board(create_board(init_board))
-simulated_annealing(init_board, 1000, 0.1)
+genetic_algorithm(init_board, 10)
 print ""
 print "Number of solutions: ", len(solutions)
 print ""

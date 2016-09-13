@@ -72,25 +72,6 @@ def fitness(state):
         print ":", len(solution_set)
     return collisions
 
-def fitness_tuple(state):
-    collisions = 0
-    for queen in range(len(state)-1):
-        for other_queen in range(queen, len(state)-1):
-            if state[queen] == state[other_queen]:
-                collisions += 1
-            if state[queen]+other_queen <= len(state) and state[queen]+other_queen == state[other_queen]:
-                collisions += 1
-            if state[queen]-other_queen > 0 and state[queen]-other_queen == state[other_queen]:
-                collisions += 1
-    if collisions == 0:
-        solutions.append(convert_board_to_tuple(state))
-        solution_set.add(convert_board_to_tuple(state))
-        print counter, "\t:",
-        for i in solutions[len(solutions)-1]:
-            print i, "\t",
-        print " :", len(solution_set)
-    return collisions
-
 def stop():
     if dimension == 4:
         return len(solutions) >= 2

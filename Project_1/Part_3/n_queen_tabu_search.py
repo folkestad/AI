@@ -210,14 +210,14 @@ def preprocessing(user_input):
     preprocessing = tuple(preprocessing)
     return preprocessing
 
-
-max_tabu_memory_size = 100
-max_number_of_visits = 4
+user_input = user_interaction()
+max_tabu_memory_size = (len(user_input)/4)*3
+max_number_of_visits = 2
 max_iterations = 100000
 counter = 0
 solutions = []
 solution_set = set()
-user_input = user_interaction()
+
 start = time.time()
 init_board = create_board(preprocessing(user_input))
 print_board(init_board)
