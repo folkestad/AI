@@ -7,14 +7,11 @@ import time
 #====== Algorithm =============================================================
 
 def genetic_algorithm(init_state, population_size, number_of_parents, mutation_rate):
-    #population_number = 1
     population = generate_init_population(init_state, population_size)
     while not stop():
         parent_list = select_parents(population, number_of_parents)
-        offspring = generate_offspring(parent_list, population_size, mutation_rate)
-        #evaluate_offspring(offspring)
-        population = offspring#generate_population()
-        #population_number += 1
+        offspring = generate_offspring(parent_list, mutation_rate)
+        population = evaluate_offspring(offspring, population_size)
 
 def select_parents(population, number_of_parents):
     fit_sum = 0
@@ -40,6 +37,17 @@ def select_parents(population, number_of_parents):
         print ""
     return parent_list
 
+def evaluate_offspring(offspring, population_size):
+    population = []
+    while len(population) != population_size:
+        random_offspring = offspring[random.randint(0, len(offspring)-1)]
+        if random_offspring in population and random.random() > random.random():
+            population.append(random_offspring)
+        else:
+            population.append(random_offspring)
+    return population
+
+
 def crossover(parent, other_parent):
     offspring = []
     offspring.extend(parent[:2])
@@ -61,18 +69,15 @@ def mutate(state):
     new_state[second] = first_list
     return tuple(new_state)
 
-def generate_offspring(parent_list, population_size, mutation_rate):
+def generate_offspring(parent_list, mutation_rate):
     offspring = []
-    population = []
     for parent in parent_list:
         for other_parent in parent_list:
             if random.random() < mutation_rate:
                 offspring.append(mutate(crossover(parent, other_parent)))
             else:
                 offspring.append(crossover(parent, other_parent))
-    for i in range(population_size):
-        population.append(offspring[random.randint(0, len(offspring)-1)])
-    return population
+    return offspring
 
 def generate_init_population(state, population_size):
     population = []
