@@ -69,6 +69,22 @@ def generate_offspring(parent, other_parent, offspring_limit):
         offspring.append(mutate(child))
     return list(set(offspring))
 
+def generate_init_population(state):
+    generation = []
+    for i in range(6):
+        new_state = list(state)
+        first = 0
+        second = 0
+        while first == second:
+            first = random.randint(0,dimension-1)
+            second = random.randint(0, dimension-1)
+        first_list = new_state[first]
+        second_list = new_state[second]
+        new_state[first] = second_list
+        new_state[second] = first_list
+        generation.append(tuple(new_state))
+    return generation
+
 def fitness(state):
     collisions = 0
     for queen_pos in range(len(state)-1):
@@ -96,21 +112,6 @@ def fitness(state):
         print " :", len(solution_set)
     return collisions
 
-def generate_init_population(state):
-    generation = []
-    for i in range(6):
-        new_state = list(state)
-        first = 0
-        second = 0
-        while first == second:
-            first = random.randint(0,dimension-1)
-            second = random.randint(0, dimension-1)
-        first_list = new_state[first]
-        second_list = new_state[second]
-        new_state[first] = second_list
-        new_state[second] = first_list
-        generation.append(tuple(new_state))
-    return generation
 
 def stop():
     if dimension == 4:
