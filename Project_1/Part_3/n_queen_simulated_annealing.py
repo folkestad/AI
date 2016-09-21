@@ -41,7 +41,6 @@ def random_state(state):
         return random_state(state)
     return new_state
 
-
 def temp_decay(temp):
     return temp * 0.95
 
