@@ -30,7 +30,7 @@ def tabu_search(init_solution):
                     continue
             if best_candidate == None:
                 best_candidate = candidate
-            if fitness_tuple(best_candidate) >= fitness_tuple(candidate): #candidate has fewer hits
+            if fitness(best_candidate) >= fitness(candidate): #candidate has fewer hits
                 best_candidate = candidate
 
             add_to_long_term_memories(best_candidate, intermediate_term_memory, long_term_memory)
@@ -73,7 +73,7 @@ def add_to_long_term_memories(best_candidate, intermediate_term_memory, long_ter
     else:
         long_term_memory[candidate_tuple] = 1
 
-def fitness_tuple(state):
+def fitness(state):
     collisions = 0
     for queen_pos in range(len(state)-1):
         counter = 1

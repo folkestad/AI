@@ -36,7 +36,7 @@ def select_parents(generation):
     parent = prob_wheel[random_parent_pos]
     other_parent = prob_wheel[random_other_parent_pos]
     while other_parent == parent:
-        other_parent = prob_wheel[random.randint(0, fit_sum-1)]
+        other_parent = prob_wheel[random.randint(0, len(prob_wheel)-1)]
     if len(solutions) < 1:
         print "Parent: ", parent, " other_parent: ", other_parent
     return parent, other_parent
