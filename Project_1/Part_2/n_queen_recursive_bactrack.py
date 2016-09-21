@@ -1,28 +1,20 @@
-#import Tkinter
+
 from termcolor import colored
 import time
 #====== Algorithm =============================================================
 
-def recursive_backtracking(column):
-    if column == len(init_board):
-        return True
-    else:
-        for row in range(len(init_board)):
-            if legal_move(row, column):
-                init_board[row][column] = 'Q'
-                if recursive_backtracking(column + 1) and column == len(init_board)-1:
-                    solution = ""
-                    for i in range(len(init_board)):
-                        for j in range(len(init_board)):
-                            if init_board[i][j] == 'Q':
-                                solution += `i+1`+" "
-                    solutions.append(solution)
-                init_board[row][column] = '.'
-        return len(solutions) > 0
 
 def recursive_backtracking_step_by_step(column):
     global temp_solution
     global init_board
+    if time.time()-start > 300:
+        print "Reached timelimit for Genetic Algorithm "
+        print ""
+        print "Number of solutions: ", len(solutions)
+        print ""
+        end = time.time()
+        print "Time: ", end-start, "s"
+        sys.exit(0)
     if column == len(init_board):
         return True
     else:
@@ -117,10 +109,26 @@ def print_first_board():
         print chr(97+i),
     print ""
 
+# def user_interaction():
+#     print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
+#     user_input = raw_input().replace(' ', '')
+#     return user_input
+
 def user_interaction():
-    print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
-    user_input = raw_input().replace(' ', '')
-    return user_input
+    global dimension
+    global start_column
+    print 'dimension (n)?'
+    dimension = int(raw_input())
+    print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
+    user_input = raw_input().split(' ')
+    try:
+        int_list = list(set([int(i) for i in user_input]))
+    except:
+        int_list = []
+    start_column = len(int_list)
+    while len(int_list) < dimension:
+        int_list.append(0)
+    return tuple(int_list)
 
 def create_board(user_input):
     init_board = []
@@ -136,23 +144,18 @@ def create_board(user_input):
 #==============================================================================
 
 #====== Flow Controll =========================================================
-
+dimension = None
+start_column = 0
 user_input = user_interaction()
-dimension = len(user_input)
 print_steps = True
 start = time.time()
 print ""
 init_board = create_board(user_input)
-start_column = 0
 temp_solution = ''
-solution_set = set()
 for i in range(len(user_input)):
-    if user_input[i] == '0':
-        start_column = i
-        break
-    else:
-        temp_solution += user_input[i]+" "
-        solution_set.add(int(user_input[i])-1)
+    if user_input[i] != 0:
+        temp_solution += str(user_input[i])+" "
+solution_set = set()
 solutions = []
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""

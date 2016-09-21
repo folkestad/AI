@@ -37,6 +37,7 @@ def legal_move(row, column):
 
 def print_step(legal):
     strip_solution = temp_solution.strip().split(" ")
+    #print "strip_solution; ",strip_solution
     for i in range(len(init_board)):
         if i < len(strip_solution)-1:
             print strip_solution[i],
@@ -60,20 +61,36 @@ def print_board():
         rownumber -= 1
     print '  a b c d e f g h'
 
+# def user_interaction():
+#     print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
+#     user_input = raw_input().replace(' ', '')
+#     while len(user_input) != 8:
+#         print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
+#         user_input = raw_input().replace(' ', '')
+#     return user_input
+
 def user_interaction():
-    print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
-    user_input = raw_input().replace(' ', '')
-    while len(user_input) != 8:
-        print 'Place queens (ex. "2 4 6 0 0 0 0 0")'
-        user_input = raw_input().replace(' ', '')
-    return user_input
+    global dimension
+    global start_column
+    print 'dimension (n)?'
+    dimension = int(raw_input())
+    print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
+    user_input = raw_input().split(' ')
+    try:
+        int_list = list(set([int(i) for i in user_input]))
+    except:
+        int_list = []
+    start_column = len(int_list)
+    while len(int_list) < dimension:
+        int_list.append(0)
+    return tuple(int_list)
 
 def create_board(user_input):
     init_board = []
-    for i in range(dimension):
+    for i in range(len(user_input)):
         init_board.append(['.','.','.','.','.','.','.','.'])
-    for i in range(dimension):
-        if user_input[i] != '0':
+    for i in range(len(user_input)):
+        if user_input[i] != 0:
             init_board[int(user_input[i])-1][i] = 'Q'
     return init_board
 
@@ -81,21 +98,15 @@ def create_board(user_input):
 
 #====== Flow Controll =========================================================
 
+dimension = None
+start_column = 0
 user_input = user_interaction()
-dimension = len(user_input)
 temp_solution = ''
 for i in range(len(user_input)):
-    if user_input[i] == '0':
-        start_column = i
-        break
-    else:
-        temp_solution += user_input[i]+" "
+    if user_input[i] != 0:
+        temp_solution += str(user_input[i])+" "
 init_board = create_board(user_input)
-start_column = 0
-for i in range(dimension):
-    if user_input[i] == '0':
-        start_column = i
-        break
+print "Temp: ", temp_solution
 solution_exists = recursive_backtracking(start_column)
 print ""
 if solution_exists:
