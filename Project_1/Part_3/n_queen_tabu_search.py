@@ -15,8 +15,8 @@ def tabu_search(init_solution):
 
     while not stop():
         iteration += 1
-        if iteration > max_iterations:
-            print "The maximum number of iterations is reached"
+        if time.time()-start > 300:
+            print "Timelimit is reached"
             break
         neighborhood = get_neighbors(best_neighbor)
         best_candidate = None
@@ -95,21 +95,27 @@ def fitness_tuple(state):
     return collisions
 
 def get_neighbors(best_neighbor):
-    return swap(best_neighbor)
+    return swap_even_more(best_neighbor)
 
-def swap(best_neighbor):
-    neighborhood = []
-    for i in range(1, len(best_neighbor)):
-        neighbor = list(best_neighbor)
-        temp = neighbor[i]
-        neighbor[i] = neighbor[i-1]
-        neighbor[i-1] = temp
-        neighborhood.append(tuple(neighbor))
-    return neighborhood
-
-# def random_swap(best_neighbor):
+# def swap(best_neighbor):
 #     neighborhood = []
-#     for i in range()
+#     for i in range(1, len(best_neighbor)):
+#         neighbor = list(best_neighbor)
+#         temp = neighbor[i]
+#         neighbor[i] = neighbor[i-1]
+#         neighbor[i-1] = temp
+#         neighborhood.append(tuple(neighbor))
+#     return neighborhood
+
+def swap_even_more(best_neighbor):
+    neighborhood = []
+	# Swap rows
+    for i in range(0, dimension - 1):
+        for j in range(i + 1, dimension):
+            neighbor = list(best_neighbor)
+            neighbor[i], neighbor[j] = neighbor[j], neighbor[i]
+            neighborhood.append(tuple(neighbor))
+    return neighborhood
 
 def stop():
     if len(user_input) == 4:
@@ -204,6 +210,7 @@ def preprocessing(user_input):
     return preprocessing
 
 user_input = user_interaction()
+dimension = len(user_input)
 max_tabu_memory_size = (len(user_input)/4)*3
 max_number_of_visits = 2
 max_iterations = 100000
