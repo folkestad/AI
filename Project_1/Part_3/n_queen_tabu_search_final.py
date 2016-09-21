@@ -91,7 +91,7 @@ def fitness_tuple(state):
         print len(solutions), ": ",
         for i in solutions[len(solutions)-1]:
             print i,
-        print " :", len(solution_set)
+        print ""#print " :", len(solution_set)
     return collisions
 
 def get_neighbors(best_neighbor):
@@ -117,25 +117,25 @@ def swap_even_more(best_neighbor):
     return neighborhood
 
 def stop():
-    if len(user_input) == 4:
+    if dimension == 4:
         return len(solutions) >= 2
-    elif len(user_input) == 5:
+    elif dimension == 5:
         return len(solutions) >= 10
-    elif len(user_input) == 6:
+    elif dimension == 6:
         return len(solutions) >= 4
-    elif len(user_input) == 7:
+    elif dimension == 7:
         return len(solutions) >= 40
-    elif len(user_input) == 8:
+    elif dimension == 8:
         return len(solutions) >= 92
-    elif len(user_input) == 9:
+    elif dimension == 9:
         return len(solutions) >= 352
-    elif len(user_input) == 10:
+    elif dimension == 10:
         return len(solutions) >= 724
-    elif len(user_input) == 16:
+    elif dimension == 16:
         return len(solutions) >= 14772512
-    elif len(user_input) == 18:
+    elif dimension == 18:
         return len(solutions) >= 666090624
-    elif len(user_input) == 20:
+    elif dimension == 20:
         return len(solutions) >= 39029188884
     else:
         True
@@ -182,16 +182,41 @@ def create_board(user_input):
 
 #====== Flow Controll =========================================================
 
+# def user_interaction():
+#     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
+#     user_input = raw_input().split(' ')
+#     int_list = []
+#     if len(user_input) < 3:
+#         for i in range(int(user_input[0])):
+#             int_list.append(i+1)
+#     else:
+#         for i in user_input:
+#             int_list.append(int(i))
+#     return tuple(int_list)
+
 def user_interaction():
+    global dimension
+    print 'dimension (n)?'
+    dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    int_list = []
-    if len(user_input) < 3:
-        for i in range(int(user_input[0])):
-            int_list.append(i+1)
+    try:
+        int_list = list(set([int(i) for i in user_input]))
+    except:
+        int_list = []
+    print int_list
+
+    if len(int_list) < dimension:
+        unused = range(1, dimension+1)
+        for i in int_list:
+            unused.remove(i)
+        for i in range(len(unused)):
+            int_list.append(unused[0])
+            unused.remove(unused[0])
     else:
-        for i in user_input:
-            int_list.append(int(i))
+        for i in int_list:
+            int_list.append(i)
+    print int_list
     return tuple(int_list)
 
 def preprocessing(user_input):
@@ -208,9 +233,10 @@ def preprocessing(user_input):
     preprocessing = tuple(preprocessing)
     return preprocessing
 
-user_input = user_interaction()
-dimension = len(user_input)
-max_tabu_memory_size = (len(user_input)/4)*3
+dimension = None
+init_board = user_interaction()
+
+max_tabu_memory_size = (dimension/4)*3
 max_number_of_visits = 2
 max_iterations = 100000
 counter = 0
@@ -218,14 +244,14 @@ solutions = []
 solution_set = set()
 
 start = time.time()
-init_board = preprocessing(user_input)
+#init_board = preprocessing(user_input)
 print_board(create_board(init_board))
 tabu_search(init_board)
 print ""
 print "Number of solutions: ", len(solutions)
 print ""
 end = time.time()
-print end-start
+print "Time: ", end-start, "s"
 
 
 #==============================================================================

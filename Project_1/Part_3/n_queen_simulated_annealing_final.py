@@ -14,7 +14,12 @@ def simulated_annealing(init_state, init_temp, temp_stop):
         iteration = 0
         while temp > temp_stop or not stop():
             if time.time()-start > 300:
-                print "Timelimit reached for Simulated Annealing ", time.time()-start
+                print "Timelimit reached for Simulated Annealing "
+                print ""
+                print "Number of solutions: ", len(solutions)
+                print ""
+                end = time.time()
+                print "Time: ", end-start, "s"
                 sys.exit(0)
 
             iteration += 1
@@ -174,7 +179,7 @@ def fitness(state):
     if collisions == 0:
         solutions_length += 1
         solutions[state] = True
-        solution_set.add(state)
+        #solution_set.add(state)
         print len(solutions), ":",
         for i in state:
             print i,
@@ -246,33 +251,60 @@ def create_board(user_input):
 
 #====== Flow Controll =========================================================
 
+# def user_interaction():
+#     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
+#     user_input = raw_input().split(' ')
+#     int_list = []
+#     if len(user_input) < 3:
+#         for i in range(int(user_input[0])):
+#             int_list.append(i+1)
+#     else:
+#         for i in user_input:
+#             int_list.append(int(i))
+#     return tuple(int_list)
+
 def user_interaction():
+    global dimension
+    print 'dimension (n)?'
+    dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    int_list = []
-    if len(user_input) < 3:
-        for i in range(int(user_input[0])):
-            int_list.append(i+1)
+    try:
+        int_list = list(set([int(i) for i in user_input]))
+    except:
+        int_list = []
+    print int_list
+
+    if len(int_list) < dimension:
+        unused = range(1, dimension+1)
+        for i in int_list:
+            unused.remove(i)
+        for i in range(len(unused)):
+            int_list.append(unused[0])
+            unused.remove(unused[0])
     else:
-        for i in user_input:
-            int_list.append(int(i))
+        for i in int_list:
+            int_list.append(i)
+    print int_list
     return tuple(int_list)
 
-def preprocessing(user_input):
-    # fixes so that no queen is on the same rownumber
-    preprocessing = set()
-    for i in range(dimension):
-        if user_input[i] != 0:
-            preprocessing.add(user_input[i])
-    if dimension == len(preprocessing):
-        return user_input
-    for i in range(1, dimension+1):
-        if i not in preprocessing:
-            character = str(i).encode('utf-8')
-            preprocessing.add(int(character))
-    preprocessing = tuple(preprocessing)
-    return preprocessing
+# def preprocessing(user_input):
+#     # fixes so that no queen is on the same rownumber
+#     preprocessing = set()
+#     for i in range(dimension):
+#         if user_input[i] != 0:
+#             preprocessing.add(user_input[i])
+#     if dimension == len(preprocessing):
+#         return user_input
+#     for i in range(1, dimension+1):
+#         if i not in preprocessing:
+#             character = str(i).encode('utf-8')
+#             preprocessing.add(int(character))
+#     preprocessing = tuple(preprocessing)
+#     return preprocessing
 
+dimension = None
+init_board = user_interaction()
 max_number_of_visits = 4
 counter = 0
 solution_size = 0
@@ -280,14 +312,12 @@ solutions_length = 0
 solutions = {}
 visited = {}
 solution_set = set()
-user_input = user_interaction()
-dimension = len(user_input)
 start = time.time()
-init_board = preprocessing(user_input)
+#init_board = preprocessing(user_input)
 print_board(create_board(init_board))
 simulated_annealing(init_board, 200, 0.5)
 print ""
 print "Number of solutions: ", len(solutions)
 print ""
 end = time.time()
-print end-start
+print "Time: ", end-start, "s"

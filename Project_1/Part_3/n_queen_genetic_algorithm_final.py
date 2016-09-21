@@ -12,7 +12,12 @@ def genetic_algorithm(init_state, population_size, number_of_parents, mutation_r
     generation_number = 0
     while not stop():
         if time.time()-start > 300:
-            print "Reached timelimit for Genetic Algorithm ", time.time()-start
+            print "Reached timelimit for Genetic Algorithm "
+            print ""
+            print "Number of solutions: ", len(solutions)
+            print ""
+            end = time.time()
+            print "Time: ", end-start, "s"
             break
         if len(solutions) < 1 and generation_number%100 == 0:
             print "Generation: ", generation_number," - ", time.time()-start
@@ -91,18 +96,6 @@ def select_parents_favor_best(population, number_of_parents):
     sorted_population = sorted(population, key=fitness)
     return sorted_population[:number_of_parents]
 
-# def select_parents_tournament(population, population_size):
-#     p = 0.7
-#     popu = list(population)
-#     parent_list = []
-#     for i in range(3):
-#         parents = []
-#         for i in range(len(population)/3):
-#             parents.append(popu.pop(0))
-#             if len(popu) == 1:
-#                 parents.append(popu.pop(0))
-#     return None
-
 def evaluate_offspring(offspring, parent_list, population_size):
     sorted_offspring = sorted(offspring, key=fitness)
     population = parent_list[:]
@@ -110,12 +103,6 @@ def evaluate_offspring(offspring, parent_list, population_size):
     while len(population) < population_size:
         population.append(sorted_offspring[i])
         i+=1
-    # population = offspring[:]
-    # if len(population) > population_size:
-    #     population = offspring[:population_size]
-    # elif len(population) < population_size:
-    #     missing_elements = population_size-len(offspring)
-    #     population.extend(parent_list[:missing_elements])
     return population
 
 # def crossover(parent, other_parent):
@@ -153,8 +140,6 @@ def crossover_keep_equal(parent, other_parent):
         if offspring[i] == 0:
             offspring[i] = random.choice(missing)
             missing.remove(offspring[i])
-    # if len(set(offspring)) < len(set(parent)):
-    #     sys.exit(0)
     return tuple(offspring)
 
 # def crossover_keep_equal_all_combos(parent, other_parent):
@@ -213,28 +198,22 @@ def fitness(state):
     else:
         for queen_pos in xrange(len(state)-1):
             counter = 1
-            # up = False
-            # straight = False
-            # down = False
             for other_queen_pos in xrange(queen_pos+1, len(state)):
-                if state[queen_pos] == state[other_queen_pos]:# and not straight:
+                if state[queen_pos] == state[other_queen_pos]:
                     collisions += 1
-                    # straight = True
-                if state[queen_pos]+counter == state[other_queen_pos]:# and not up:
+                if state[queen_pos]+counter == state[other_queen_pos]:
                     collisions += 1
-                    # up = True
-                if state[queen_pos]-counter == state[other_queen_pos]: #and not down:
+                if state[queen_pos]-counter == state[other_queen_pos]:
                     collisions += 1
-                    # down = True
                 counter += 1
         visited[state] = collisions
         if collisions == 0 and state not in solutions:
             solutions.append(state)
-            solution_set.add(state)
+            #solution_set.add(state)
             print len(solutions), ": ",
             for i in solutions[len(solutions)-1]:
                 print i,
-            print ":", len(solution_set)
+            print ""#print ":", len(solution_set)
         return visited[state]
     return collisions
 
@@ -283,25 +262,6 @@ def print_board(board):
         print chr(97+i),
     print ""
 
-def quick_sort(ul):
-    return quick_sort_algorithm(ul, 0, len(ul)-1)
-
-def quick_sort_algorithm(ul, lo, hi):
-    if lo < hi:
-        pivot = partition(ul, lo, hi)
-        quick_sort_algorithm(ul, lo, pivot-1)
-        quick_sort_algorithm(ul, pivot+1, hi)
-
-def partition(ul, lo, hi):
-    pivot = ul[hi]
-    i = lo
-    for j in range(lo, hi):
-        if fitness(ul[j])<=fitness(pivot):
-            ul[i], ul[j] = ul[j], ul[i]
-            i+=1
-    ul[hi], ul[i] = ul[i], ul[hi]
-    return i
-
 #==============================================================================
 
 #====== Creation of Board =====================================================
@@ -322,33 +282,49 @@ def create_board(user_input):
 #====== Flow Controll =========================================================
 
 def user_interaction():
+    global dimension
+    print 'dimension (n)?'
+    dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    int_list = []
-    if len(user_input) < 3:
-        for i in range(int(user_input[0])):
-            int_list.append(i+1)
+    try:
+        int_list = list(set([int(i) for i in user_input]))
+    except:
+        int_list = []
+    print int_list
+
+    if len(int_list) < dimension:
+        unused = range(1, dimension+1)
+        for i in int_list:
+            unused.remove(i)
+        for i in range(len(unused)):
+            int_list.append(unused[0])
+            unused.remove(unused[0])
     else:
-        for i in user_input:
-            int_list.append(int(i))
+        for i in int_list:
+            int_list.append(i)
+    print int_list
     return tuple(int_list)
 
-def preprocessing(user_input):
-    # fixes so that no queen is on the same rownumber
-    preprocessing = set()
-    for i in range(dimension):
-        if user_input[i] != 0:
-            preprocessing.add(user_input[i])
-    if dimension == len(preprocessing):
-        return user_input
-    for i in range(1, dimension+1):
-        if i not in preprocessing:
-            character = str(i).encode('utf-8')
-            preprocessing.add(int(character))
-    preprocessing = tuple(preprocessing)
-    return preprocessing
+# def preprocessing(user_input):
+#     # fixes so that no queen is on the same rownumber
+#     preprocessing = set()
+#     for i in range(dimension):
+#         if user_input[i] != 0:
+#             preprocessing.add(user_input[i])
+#     if dimension == len(preprocessing):
+#         return user_input
+#     for i in range(1, dimension+1):
+#         if i not in preprocessing:
+#             character = str(i).encode('utf-8')
+#             preprocessing.add(int(character))
+#     preprocessing = tuple(preprocessing)
+#     return preprocessing
 
-max_iterations = 10000
+
+# solution_set = set()
+dimension = None
+init_board = user_interaction()
 population_size = 100
 number_of_parents = population_size/2
 if number_of_parents%2 != 0:
@@ -357,15 +333,12 @@ mutation_rate = 0.8
 counter = 0
 solutions = []
 visited = {}
-solution_set = set()
-user_input = user_interaction()
-dimension = len(user_input)
 start = time.time()
-init_board = preprocessing(user_input)
+#init_board = preprocessing(user_input)
 print_board(create_board(init_board))
 genetic_algorithm(init_board, population_size, number_of_parents, mutation_rate)
 print ""
 print "Number of solutions: ", len(solutions)
 print ""
 end = time.time()
-print end-start
+print "Time: ", end-start, "s"
