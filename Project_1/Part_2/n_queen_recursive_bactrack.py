@@ -42,12 +42,15 @@ def recursive_backtracking_step_by_step(column):
         return len(solutions) > 0
 
 def legal_move(row, column):
+    #print row, " ", column
     for col in range(1, column+1):
         if row-col >= 0 and init_board[row-col][column-col] == 'Q':
+            #print "first"
             return False
         #if init_board[row][column-col] == 'Q':
         #    return False
         if row+col < len(init_board) and init_board[row+col][column-col] == 'Q':
+            #print "second"
             return False
     return True
 
@@ -137,7 +140,7 @@ def create_board(user_input):
         for j in range(len(user_input)):
             init_board[i].append('.')
     for i in range(len(user_input)):
-        if user_input[i] != '0':
+        if user_input[i] != 0:
             init_board[int(user_input[i])-1][i] = 'Q'
     return init_board
 
@@ -157,10 +160,12 @@ for i in range(len(user_input)):
         temp_solution += str(user_input[i])+" "
 solution_set = set()
 solutions = []
+print_board()
+print ""
 solution_exists = recursive_backtracking_step_by_step(start_column)
 print ""
 if solution_exists:
-    #print_first_board()
+    print "Solutions:"
     for i in solutions:
         print i
     print ""
