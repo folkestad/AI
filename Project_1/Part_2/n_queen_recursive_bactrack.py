@@ -8,7 +8,7 @@ import sys
 def recursive_backtracking_step_by_step(column):
     global temp_solution
     global init_board
-    
+
     if column == len(init_board):
         return True
     else:
@@ -118,7 +118,8 @@ def user_interaction():
     dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    if len(user_input) > 0:
+    print user_input
+    if len(user_input) > 0 and user_input != ['']:
         int_list = list([int(i) for i in user_input])
         print int_list
         for i in range(len(int_list)-1, -1, -1):
