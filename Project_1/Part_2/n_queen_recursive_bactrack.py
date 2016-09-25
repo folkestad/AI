@@ -1,29 +1,23 @@
 
 from termcolor import colored
 import time
+import sys
 #====== Algorithm =============================================================
 
 
 def recursive_backtracking_step_by_step(column):
     global temp_solution
     global init_board
-    if time.time()-start > 300:
-        print "Reached timelimit for Genetic Algorithm "
-        print ""
-        print "Number of solutions: ", len(solutions)
-        print ""
-        end = time.time()
-        print "Time: ", end-start, "s"
-        sys.exit(0)
+    
     if column == len(init_board):
         return True
     else:
         for row in range(len(init_board)):
-            if row in solution_set:
+            if row+1 in solution_set:
                 continue
             else:
                 prev_solution = temp_solution
-                solution_set.add(row)
+                solution_set.add(row+1)
                 if legal_move(row, column):
                     init_board[row][column] = 'Q'
                     temp_solution += "%d " % (row+1)
@@ -38,19 +32,19 @@ def recursive_backtracking_step_by_step(column):
                     if len(solutions) < 1:
                         print_step(False)
                     temp_solution = prev_solution
-                solution_set.remove(row)
+                solution_set.remove(row+1)
         return len(solutions) > 0
 
 def legal_move(row, column):
     #print row, " ", column
     for col in range(1, column+1):
         if row-col >= 0 and init_board[row-col][column-col] == 'Q':
-            #print "first"
             return False
-        #if init_board[row][column-col] == 'Q':
+        # if init_board[row][column-col] == 'Q':
+        #     if row == 4:
+        #         print "2"
         #    return False
         if row+col < len(init_board) and init_board[row+col][column-col] == 'Q':
-            #print "second"
             return False
     return True
 
@@ -134,7 +128,7 @@ def user_interaction():
         print int_list
     else:
         int_list = []
-    print int_list
+
     start_column = len(int_list)
     while len(int_list) < dimension:
         int_list.append(0)
@@ -162,10 +156,11 @@ start = time.time()
 print ""
 init_board = create_board(user_input)
 temp_solution = ''
+solution_set = set()
 for i in range(len(user_input)):
     if user_input[i] != 0:
         temp_solution += str(user_input[i])+" "
-solution_set = set()
+    solution_set.add(user_input[i])
 solutions = []
 print_board()
 print ""
