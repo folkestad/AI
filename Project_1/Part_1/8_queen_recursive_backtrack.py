@@ -1,5 +1,6 @@
 #import Tkinter
 from termcolor import colored
+import sys
 #====== Algorithm =============================================================
 
 def recursive_backtracking(column):
@@ -22,7 +23,7 @@ def recursive_backtracking(column):
         return False
 
 def legal_move(row, column):
-    for col in range(0, column+1):
+    for col in range(1, column+1):
         if row-col >= 0 and init_board[row-col][column-col] == 'Q':
             return False
         if init_board[row][column-col] == 'Q':
@@ -70,10 +71,7 @@ def print_board():
 #     return user_input
 
 def user_interaction():
-    global dimension
     global start_column
-    print 'dimension (n)?'
-    dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
     try:
@@ -98,14 +96,19 @@ def create_board(user_input):
 
 #====== Flow Controll =========================================================
 
-dimension = None
+dimension = 8
 start_column = 0
+start_row = 0
 user_input = user_interaction()
 temp_solution = ''
 for i in range(len(user_input)):
     if user_input[i] != 0:
         temp_solution += str(user_input[i])+" "
 init_board = create_board(user_input)
+# for i in range(start_column, -1, -1):
+#     if not legal_move(user_input[i]-1, i):
+#         print "Illegal input"
+#         sys.exit(0)
 print "Temp: ", temp_solution
 solution_exists = recursive_backtracking(start_column)
 print ""

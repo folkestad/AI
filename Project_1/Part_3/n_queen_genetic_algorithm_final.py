@@ -11,11 +11,12 @@ def genetic_algorithm(init_state, population_size, number_of_parents, mutation_r
     population = generate_init_population(init_state, population_size)
     generation_number = 0
     while not stop():
-        if time.time()-start > 300:
+        if time.time()-start > 300:# or generation_number >= generation_number_stop:
             print "Reached timelimit for Genetic Algorithm "
             print ""
             print "Number of solutions: ", len(solutions)
             print ""
+            print "Number of Generations: ", generation_number
             end = time.time()
             print "Time: ", end-start, "s"
             break
@@ -25,7 +26,7 @@ def genetic_algorithm(init_state, population_size, number_of_parents, mutation_r
                 print p, " "
             print ""
         parent_list = select_parents_favor_best(population, number_of_parents)
-        offspring = generate_offspring(population, parent_list, mutation_rate, crossover_keep_equal)
+        offspring = generate_offspring(population, parent_list, mutation_rate, crossover_random)
         population = evaluate_offspring(offspring, parent_list, population_size)
         generation_number+=1
 
@@ -325,11 +326,12 @@ def user_interaction():
 # solution_set = set()
 dimension = None
 init_board = user_interaction()
-population_size = 100
+population_size = 60
 number_of_parents = population_size/2
 if number_of_parents%2 != 0:
     number_of_parents+=1
 mutation_rate = 0.8
+generation_number_stop = 20000
 counter = 0
 solutions = []
 visited = {}
@@ -337,8 +339,8 @@ start = time.time()
 #init_board = preprocessing(user_input)
 print_board(create_board(init_board))
 genetic_algorithm(init_board, population_size, number_of_parents, mutation_rate)
-print ""
-print "Number of solutions: ", len(solutions)
-print ""
-end = time.time()
-print "Time: ", end-start, "s"
+# print ""
+# print "Number of solutions: ", len(solutions)
+# print ""
+# end = time.time()
+# print "Time: ", end-start, "s"
