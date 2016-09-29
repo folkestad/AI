@@ -4,14 +4,7 @@ import sys
 import random
 
 def Q(state, action):
-    if action == 0:
-        return states[state][0]
-    elif action == 1:
-        return states[state][1]
-    elif action == 2:
-        return states[state][2]
-    elif action == 3:
-        return states[state][3]
+    return states[state][action]
 
 def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     random_int = random.random()
