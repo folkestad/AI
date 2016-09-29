@@ -2,7 +2,7 @@ from __future__ import print_function
 import gym
 import sys
 import random
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 
 def Q(state, action):
     if action == 0:
@@ -46,24 +46,30 @@ states = []
 for i in range(16):
     states.append([0.5, 1, 0.5, 0.5])
 reward = 0
-
-while reward != 1:
+reward_list = []
+while episode < 2000:
     state = env.reset()
+    total_reward = 0
     for i in range(100):
-        env.render()
+        # env.render()
         action = epsilon_greedy_pick(state, epsilon)
         new_state, reward, done, info = env.step(action)
         Q_learning(state, action, new_state, reward)
         state = new_state
+        total_reward += reward
         if done and reward == 1:
-            env.render()
-            print ("You found a pot of gold in {} episodes.".format(episode))
-            for state in states:
-                print (state)
-            print ()
+            # env.render()
+            # print ("You found a pot of gold in {} episodes.".format(episode))
+            # for state in states:
+            #     print (state)
             break
         if done:
-            env.render()
-            print ("You fell down a hole.")
+            # env.render()
+            # print ("You fell down a hole.")
             break
+    reward_list.append(total_reward)
+    total_reward = 0
     episode += 1
+
+plt.plot(reward_list)
+plt.show()
