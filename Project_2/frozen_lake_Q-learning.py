@@ -43,7 +43,7 @@ for i in range(16):
 reward = 0
 reward_list = []
 episode = 1
-while episode < 10000:
+while episode < 7000:
     state = env.reset()
     for i in range(100):
         action = epsilon_greedy_pick(state, epsilon)
