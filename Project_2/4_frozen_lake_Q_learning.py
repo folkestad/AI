@@ -42,12 +42,12 @@ for i in range(16):
 reward = 0
 reward_list = []
 episode = 1
-while episode < 7000:
+while episode < 10000:
     state = env.reset()
     action = epsilon_greedy_pick(state, epsilon)
     for i in range(100):
-        next_action = epsilon_greedy_pick(state, epsilon)
         next_state, reward, done, info = env.step(action)
+        next_action = epsilon_greedy_pick(next_state, epsilon)
         Q_learning(state, action, next_state, next_action, reward)
         action = next_action
         state = next_state
