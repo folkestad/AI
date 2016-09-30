@@ -20,10 +20,10 @@ def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
 
 def max_Q(state):
     action_index = 0
-    for action_i in range(len(states[state])):
+    for action_i in range(len(Q_states[state])):
         if Q(state, action_index) < Q(state, action_i):
             action_index = action_i
-    return states[state][action_index]
+    return Q_states[state][action_index]
 
 def Q_learning(state, action, new_state, reward):
     states[state][action] = states[state][action] + \
@@ -31,13 +31,39 @@ def Q_learning(state, action, new_state, reward):
             (reward + (disc_factor * max_Q(new_state)) - \
                 states[state][action])
 
+def read():
+    global Q_states
+    # try:
+    file = open('q_learning.txt', 'r')
+    text = file.read()
+    text_lines = text.split("\n")
+    for i in range(len(text_lines)-1):
+        text_lines[i] = text_lines[i].replace("[","")
+        text_lines[i] = text_lines[i].replace("]","")
+        action_values = text_lines[i].split(",")
+        state = []
+        for a_v in action_values:
+            #print ("*",a_v,"*")
+            state.append(float(a_v.replace(" ","")))
+        Q_states.append(state)
+    file.close()
+    # except:
+    #     print ("Could not read file.")
+    #     sys.exit(0)
+
 env = gym.make('FrozenLake-v0')
 epsilon = 0.1
 learning_rate = 0.1
 disc_factor = 0.99
+
 states = []
 for i in range(16):
     states.append([0.5, 1, 0.5, 0.5])
+
+Q_states = []
+read()
+for i in Q_states:
+    print (i)
 
 reward = 0
 reward_list = []
