@@ -59,6 +59,10 @@ while episode < 7000:
 
 for state in states:
     print (state)
+file = open('q_learning.txt','w')
+for state in states:
+    file.write(str(state))
+file.close()
 env.render()
 plt.plot(reward_list)
 plt.xlabel('Episode number')
