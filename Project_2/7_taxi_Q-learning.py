@@ -24,6 +24,17 @@ def Q_learning(state, action, next_state, next_action, reward):
             (reward + (disc_factor * states[next_state][next_action]) - \
                 states[state][action])
 
+def avg_reward_okey():
+    if len(reward_list) < 100:
+        return False
+    avg_reward = 0
+    for i in range(len(reward_list)-1, len(reward_list)-101, -1):
+        avg_reward+=reward_list[i]
+    if float(avg_reward)/100 > 9.7:
+        return True
+    else:
+        return False
+
 #====================== Algorithm ==================================================================
 
 env = gym.make('Taxi-v1')
@@ -36,7 +47,7 @@ for i in range(500):
 
 episode = 0
 reward_list = []
-while episode < 5000:
+while episode < 50000:
     tot_reward = 0
     state = env.reset()
     action = epsilon_greedy_pick(state, epsilon)
@@ -48,9 +59,13 @@ while episode < 5000:
         state = next_state
         tot_reward += reward
         if done:
-            reward_list.append(tot_reward)
             break
+    reward_list.append(tot_reward)
+    if avg_reward_okey():
+        break
     episode += 1
+    if episode%1000 == 0:
+        epsilon-=0.01
 
 for state in states:
     print (state)
@@ -59,7 +74,14 @@ counter = 0
 for i in range(len(reward_list)-1, len(reward_list)-101, -1):
     avg_reward+=reward_list[i]
     counter+=1
-print ("avg_reward of last 100 {} and length {}".format(avg_reward, counter))
+print ("last 100 elements of reward_list: {}".format([reward_list[i] for i in range(len(reward_list)-1, len(reward_list)-101,-1)]))
+#print ("first 10 elemts of reward_list: {}".format([reward_list[i] for i in range(10)]))
+print ("reward_list length: {}".format(len(reward_list)))
+avg_reward = 0
+for i in range(len(reward_list)-1, len(reward_list)-101, -1):
+    avg_reward+=reward_list[i]
+print ("average reward of last 100 elements: {}".format(float(avg_reward)/100))
+print ("Episode {}".format(episode))
 env.render()
 plt.figure(figsize=(18,10))
 plt.plot(reward_list)
