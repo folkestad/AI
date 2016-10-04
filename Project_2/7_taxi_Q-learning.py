@@ -43,7 +43,7 @@ learning_rate = 0.1
 disc_factor = 0.99
 states = []
 for i in range(500):
-    states.append([0,0,0,0,0,0])
+    states.append([0.5,0.5,0.5,0.5,0.5,0.5])
 
 episode = 0
 reward_list = []
@@ -51,7 +51,7 @@ while episode < 50000:
     tot_reward = 0
     state = env.reset()
     action = epsilon_greedy_pick(state, epsilon)
-    for i in range(100):
+    while True:
         next_state, reward, done, info = env.step(action)
         next_action = epsilon_greedy_pick(next_state, epsilon)
         Q_learning(state, action, next_state, next_action, reward)
@@ -64,7 +64,7 @@ while episode < 50000:
     if avg_reward_okey():
         break
     episode += 1
-    if episode%1000 == 0:
+    if episode%50 == 0:
         epsilon-=0.02
 
 #====================== Functions calls and prints =================================================
