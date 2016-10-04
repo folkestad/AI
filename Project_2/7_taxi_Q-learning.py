@@ -67,6 +67,8 @@ while episode < 50000:
     if episode%1000 == 0:
         epsilon-=0.02
 
+#====================== Functions calls and prints =================================================
+
 for state in states:
     print (state)
 avg_reward = 0
@@ -75,7 +77,6 @@ for i in range(len(reward_list)-1, len(reward_list)-101, -1):
     avg_reward+=reward_list[i]
     counter+=1
 print ("\nLast 100 elements of reward_list: {}".format([reward_list[i] for i in range(len(reward_list)-1, len(reward_list)-101,-1)]))
-#print ("first 10 elemts of reward_list: {}".format([reward_list[i] for i in range(10)]))
 print ("\nReward_list length: {}".format(len(reward_list)))
 avg_reward = 0
 for i in range(len(reward_list)-1, len(reward_list)-101, -1):
