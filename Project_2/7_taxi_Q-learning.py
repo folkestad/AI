@@ -7,22 +7,22 @@ import matplotlib.pyplot as plt
 def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     random_int = random.randint(0,100)
     if float(random_int)/100 < epsilon:
-        return random.randint(0, len(states[state])-1)
+        return random.randint(0, len(state_actions[state])-1)
     else:
         action_index = 0
-        for action_i in range(len(states[state])):
+        for action_i in range(len(state_actions[state])):
             if Q(state, action_index) < Q(state, action_i):
                 action_index = action_i
         return action_index
 
 def Q(state, action):
-    return states[state][action]
+    return state_actions[state][action]
 
 def Q_learning(state, action, next_state, next_action, reward):
-    states[state][action] = states[state][action] + \
+    state_actions[state][action] = state_actions[state][action] + \
         learning_rate * \
-            (reward + (disc_factor * states[next_state][next_action]) - \
-                states[state][action])
+            (reward + (discount_factor * state_actions[next_state][next_action]) - \
+                state_actions[state][action])
 
 def avg_reward_okey():
     if len(reward_list) < 100:
@@ -40,10 +40,10 @@ def avg_reward_okey():
 env = gym.make('Taxi-v1')
 epsilon = 0.1
 learning_rate = 0.1
-disc_factor = 0.99
-states = []
+discount_factor = 0.99
+state_actions = []
 for i in range(500):
-    states.append([0.5,0.5,0.5,0.5,0.5,0.5])
+    state_actions.append([0.5,0.5,0.5,0.5,0.5,0.5])
 
 episode = 0
 reward_list = []
@@ -69,7 +69,7 @@ while episode < 50000:
 
 #====================== Functions calls and prints =================================================
 
-for state in states:
+for state in state_actions:
     print (state)
 avg_reward = 0
 counter = 0
