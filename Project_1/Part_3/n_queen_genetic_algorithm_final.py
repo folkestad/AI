@@ -26,7 +26,7 @@ def genetic_algorithm(init_state, population_size, number_of_parents, mutation_r
                 print p, " "
             print ""
         parent_list = select_parents_favor_best(population, number_of_parents)
-        offspring = generate_offspring(population, parent_list, mutation_rate, crossover_random)
+        offspring = generate_offspring(population, parent_list, mutation_rate, crossover_)
         population = evaluate_offspring(offspring, parent_list, population_size)
         generation_number+=1
 
@@ -288,24 +288,37 @@ def user_interaction():
     dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    try:
-        int_list = list(set([int(i) for i in user_input]))
-    except:
-        int_list = []
-    print int_list
-
-    if len(int_list) < dimension:
-        unused = range(1, dimension+1)
-        for i in int_list:
-            unused.remove(i)
-        for i in range(len(unused)):
-            int_list.append(unused[0])
-            unused.remove(unused[0])
-    else:
-        for i in int_list:
-            int_list.append(i)
+    int_list = []
+    for i in user_input:
+        int_list.append(int(i))
     print int_list
     return tuple(int_list)
+    # try:
+    #     int_list = [int(i) for i in user_input]
+    #     #print int_list
+    #     for i in range(len(int_list)-1, -1, -1):
+    #         for j in range(len(int_list)):
+    #             if j != i and int_list[i] == int_list[j]:
+    #                 int_list[i] = 0
+    # except:
+    #     int_list = []
+    # print int_list
+    # if len(int_list) < dimension:
+    #     unused = range(1, dimension+1)
+    #     print "1"
+    #     for i in int_list:
+    #         print "2"
+    #         unused.remove(i)
+    #     for i in range(len(unused)):
+    #         print "3"
+    #         int_list.append(unused[0])
+    #         unused.remove(unused[0])
+    #     print "hei", int_list
+    # else:
+    #     for i in int_list:
+    #         int_list.append(i)
+    # print int_list
+    # return tuple(int_list)
 
 # def preprocessing(user_input):
 #     # fixes so that no queen is on the same rownumber
@@ -326,7 +339,7 @@ def user_interaction():
 # solution_set = set()
 dimension = None
 init_board = user_interaction()
-population_size = 60
+population_size = 10
 number_of_parents = population_size/2
 if number_of_parents%2 != 0:
     number_of_parents+=1

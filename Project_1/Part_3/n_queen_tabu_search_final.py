@@ -15,13 +15,13 @@ def tabu_search(init_solution):
 
     while not stop():
         iteration += 1
-        if time.time()-start > 300:
+        if time.time()-start > 5:
             print "Timelimit is reached for Tabu Search"
             break
         neighborhood = get_neighbors(best_neighbor)
         best_candidate = None
         for candidate in neighborhood:
-            if len(solutions) < 1:
+            if len(solutions) < 2:
                 print candidate
             if candidate in short_term_memory:
                 continue
@@ -200,24 +200,34 @@ def user_interaction():
     dimension = int(raw_input())
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
-    try:
-        int_list = list(set([int(i) for i in user_input]))
-    except:
-        int_list = []
-    print int_list
-
-    if len(int_list) < dimension:
-        unused = range(1, dimension+1)
-        for i in int_list:
-            unused.remove(i)
-        for i in range(len(unused)):
-            int_list.append(unused[0])
-            unused.remove(unused[0])
-    else:
-        for i in int_list:
-            int_list.append(i)
+    int_list = []
+    for i in user_input:
+        int_list.append(int(i))
     print int_list
     return tuple(int_list)
+    # global dimension
+    # print 'dimension (n)?'
+    # dimension = int(raw_input())
+    # print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
+    # user_input = raw_input().split(' ')
+    # try:
+    #     int_list = list(set([int(i) for i in user_input]))
+    # except:
+    #     int_list = []
+    # print int_list
+    #
+    # if len(int_list) < dimension:
+    #     unused = range(1, dimension+1)
+    #     for i in int_list:
+    #         unused.remove(i)
+    #     for i in range(len(unused)):
+    #         int_list.append(unused[0])
+    #         unused.remove(unused[0])
+    # else:
+    #     for i in int_list:
+    #         int_list.append(i)
+    # print int_list
+    # return tuple(int_list)
 
 def preprocessing(user_input):
     # fixes so that no queen is on the same rownumber

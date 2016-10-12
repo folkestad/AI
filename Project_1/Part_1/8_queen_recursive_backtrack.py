@@ -75,7 +75,12 @@ def user_interaction():
     print 'Place queens (ex. "2 4 6 3 1 8 7 5")'
     user_input = raw_input().split(' ')
     try:
-        int_list = list(set([int(i) for i in user_input]))
+        int_list = list([int(i) for i in user_input])
+        #print int_list
+        for i in range(len(int_list)-1, -1, -1):
+            for j in range(len(int_list)):
+                if j != i and int_list[i] == int_list[j]:
+                    int_list[i] = 0
     except:
         int_list = []
     start_column = len(int_list)
