@@ -4,40 +4,37 @@ import sys
 import random
 import matplotlib.pyplot as plt
 
-def Q(state, action):
-    return states[state][action]
-
 def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     random_int = random.random()
     if random_int < epsilon:
-        return random.randint(0, len(states[state])-1)
+        return random.randint(0, len(Q[state])-1)
     else:
-        action_index = 0
-        for action_i in range(len(states[state])):
-            if Q(state, action_index) < Q(state, action_i):
-                action_index = action_i
-        return action_index
+        max_action = 0
+        for action in range(len(Q[state])):
+            if Q[state][max_action] < Q[state][action]:
+                max_action = action
+        return max_action
 
 def max_Q(state):
-    action_index = 0
-    for action_i in range(len(states[state])):
-        if Q(state, action_index) < Q(state, action_i):
-            action_index = action_i
-    return states[state][action_index]
+    max_action = 0
+    for action in range(len(Q[state])):
+        if Q[state][max_action] < Q[state][action]:
+            max_action = action
+    return Q[state][max_action]
 
 def Q_learning(state, action, next_state, next_action, reward):
-    states[state][action] = states[state][action] + \
+    Q[state][action] = Q[state][action] + \
         learning_rate * \
-            (reward + (disc_factor * states[next_state][next_action]) - \
-                states[state][action])
+            (reward + (disc_factor * Q[next_state][next_action]) - \
+                Q[state][action])
 
 env = gym.make('FrozenLake-v0')
 epsilon = 0.1
 learning_rate = 0.1
 disc_factor = 0.99
-states = []
+Q = []
 for i in range(16):
-    states.append([0.5, 1, 0.5, 0.5])
+    Q.append([0.5, 1, 0.5, 0.5])
 
 reward = 0
 reward_list = []
@@ -59,7 +56,7 @@ while episode < 10000:
             break
     episode += 1
 
-for state in states:
+for state in Q:
     print (state)
 env.render()
 plt.plot(reward_list)
