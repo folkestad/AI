@@ -19,9 +19,9 @@ def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
 def max_Q(state):
     max_action = 0
     for action in range(len(Q[state])):
-        if Q[state][max_action] < Q[state][action]:
+        if Q_states[state][max_action] < Q_states[state][action]:
             max_action = action
-    return Q[state][max_action]
+    return Q_states[state][max_action]
 
 def Q_learning(state, action, new_state, reward):
     Q[state][action] = Q[state][action] + \
