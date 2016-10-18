@@ -4,6 +4,7 @@ import random
 import matplotlib.pyplot as plt
 
 #====================== Helpers ====================================================================
+
 def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     random_int = random.randint(0,100)
     if float(random_int)/100 < epsilon:
@@ -40,7 +41,7 @@ learning_rate = 0.1
 discount_factor = 0.99
 Q = []
 for i in range(500):
-    Q.append([0.5,0.5,0.5,0.5,0.5,0.5])
+    Q.append([0,0,0,0,0,0])
 
 episode = 0
 reward_list = []
