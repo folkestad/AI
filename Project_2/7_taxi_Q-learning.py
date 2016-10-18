@@ -39,9 +39,9 @@ env = gym.make('Taxi-v1')
 epsilon = 0.1
 learning_rate = 0.1
 discount_factor = 0.99
-Q = []
-for i in range(500):
-    Q.append([0,0,0,0,0,0])
+Q = {}
+for state in range(500):
+    Q[state] = [0,0,0,0,0,0]
 
 episode = 0
 reward_list = []
