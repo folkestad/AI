@@ -10,18 +10,18 @@ def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     if random_int < epsilon:
         return random.randint(0, len(Q[state])-1)
     else:
-        max_action = 0
+        best_action = 0
         for action in range(len(Q[state])):
-            if Q[state][max_action] < Q[state][action]:
-                max_action = action
-        return max_action
+            if Q[state][best_action] < Q[state][action]:
+                best_action = action
+        return best_action
 
 def max_Q(state):
-    max_action = 0
+    best_action = 0
     for action in range(len(Q[state])):
-        if Q[state][max_action] < Q[state][action]:
-            max_action = action
-    return Q[state][max_action]
+        if Q[state][best_action] < Q[state][action]:
+            best_action = action
+    return Q[state][best_action]
 
 def Q_learning(state, action, new_state, reward):
     Q[state][action] = Q[state][action] + \
@@ -40,9 +40,9 @@ for i in range(16):
 reward = 0
 reward_list = []
 episode = 1
-while episode < 7000:
+while episode < 20000:
     state = env.reset()
-    for i in range(100):
+    while True:
         action = epsilon_greedy_pick(state, epsilon)
         new_state, reward, done, info = env.step(action)
         Q_learning(state, action, new_state, reward)
@@ -54,6 +54,8 @@ while episode < 7000:
                 reward_list.append(0)
             break
     episode += 1
+    if episode%500 == 0:
+        epsilon-=0.005
 
 for state in Q:
     print (state)
@@ -62,6 +64,7 @@ for state in Q:
     file.write(str(state)+"\n")
 file.close()
 env.render()
+plt.figure(figsize=(18,10))
 plt.plot(reward_list)
 plt.xlabel('Episode number')
 plt.ylabel('Reward')

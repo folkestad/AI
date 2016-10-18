@@ -10,18 +10,18 @@ def epsilon_greedy_pick(state, epsilon): #picks direction with largest reward
     if random_int < epsilon:
         return random.randint(0, len(Q[state])-1)
     else:
-        max_action = 0
+        best_action = 0
         for action in range(len(Q[state])):
-            if Q[state][max_action] < Q[state][action]:
-                max_action = action
-        return max_action
+            if Q[state][best_action] < Q[state][action]:
+                best_action = action
+        return best_action
 
 def max_Q(state):
-    max_action = 0
+    best_action = 0
     for action in range(len(Q[state])):
-        if Q_states[state][max_action] < Q_states[state][action]:
-            max_action = action
-    return Q_states[state][max_action]
+        if Q_states[state][best_action] < Q_states[state][action]:
+            best_action = action
+    return Q_states[state][best_action]
 
 def Q_learning(state, action, new_state, reward):
     Q[state][action] = Q[state][action] + \
@@ -29,8 +29,8 @@ def Q_learning(state, action, new_state, reward):
             (reward + (disc_factor * max_Q(new_state)) - \
                 Q[state][action])
 
-def read():
-    global Q_states
+def read_states():
+    Q_states = []
     try:
         file = open('q_learning.txt', 'r')
         text = file.read()
@@ -44,6 +44,7 @@ def read():
                 state.append(float(a_v.replace(" ","")))
             Q_states.append(state)
         file.close()
+        return Q_states
     except:
         print ("Could not read file.")
         sys.exit(0)
@@ -57,17 +58,16 @@ Q = []
 for i in range(16):
     Q.append([0.5, 1, 0.5, 0.5])
 
-Q_states = []
-read()
+Q_states = read_states()
 for state in Q_states:
     print (state)
 
 reward = 0
 reward_list = []
 episode = 1
-while episode < 7000:
+while episode < 20000:
     state = env.reset()
-    for i in range(100):
+    while True:
         action = epsilon_greedy_pick(state, epsilon)
         new_state, reward, done, info = env.step(action)
         Q_learning(state, action, new_state, reward)
