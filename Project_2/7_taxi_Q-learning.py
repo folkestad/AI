@@ -68,7 +68,7 @@ while episode < 50000:
 #====================== Functions calls and prints =================================================
 
 for state in Q:
-    print (state)
+    print (Q[state])
 avg_reward = 0
 counter = 0
 for i in range(len(reward_list)-1, len(reward_list)-101, -1):
