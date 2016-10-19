@@ -7,4 +7,4 @@ Recursive backtracking, Tabu Search, Simulated Annealing and Genetic Algorithm s
 Reinforcement learning with OpenAI environments
 
 ## Project 3:
-Self-organizing Map to solve Traveling Salesman Problem
+Self-organizing Map via an Artificial Neural Network to solve Traveling Salesman Problem
