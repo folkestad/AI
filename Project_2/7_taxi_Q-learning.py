@@ -64,7 +64,7 @@ while episode < 50000:
     episode += 1
     if episode%50 == 0:
         epsilon-=0.02
-
+        
 #====================== Functions calls and prints =================================================
 
 for state in Q:
